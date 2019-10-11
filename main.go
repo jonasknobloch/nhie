@@ -51,7 +51,7 @@ func init() {
 		viper.GetString("db_port"),
 		viper.GetString("db_name"),
 		viper.GetString("db_user"),
-		viper.GetString("db_user"),
+		viper.GetString("db_pass"),
 	)
 
 	var err error
