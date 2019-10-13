@@ -13,8 +13,8 @@ import (
 type (
 	Statement struct {
 		ID        uuid.UUID  `gorm:"primary_key;type:uuid"`
-		Statement string     `json:"statement"`
-		Category  Category   `json:"category" sql:"type:category"`
+		Statement string     `gorm:"unique;not null" json:"statement"`
+		Category  Category   `gorm:"not null" json:"category" sql:"type:category"`
 		CreatedAt time.Time  `json:"-"`
 		UpdatedAt time.Time  `json:"-"`
 		DeletedAt *time.Time `sql:"index" json:"-"`
