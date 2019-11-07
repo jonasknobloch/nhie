@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/neverhaveiever-io/api/database"
-	"math/rand"
 	"regexp"
 	"time"
 )
@@ -44,7 +43,7 @@ func (s *Statement) Delete() error {
 	return database.Connection.Delete(&s).Error
 }
 
-func FindStatementById(ID uuid.UUID) (Statement, error) {
+func GetStatementById(ID uuid.UUID) (Statement, error) {
 	var statement Statement
 
 	if err := database.Connection.Where(&Statement{ID: ID}).Find(&statement).Error; err != nil {
@@ -54,22 +53,12 @@ func FindStatementById(ID uuid.UUID) (Statement, error) {
 	return statement, nil
 }
 
-func GetRandomStatement(categories ...Category) (Statement, error) {
+func GetRandomStatementByCategory(category Category) (Statement, error) {
 	var statement Statement
-
-	rand.Seed(time.Now().Unix())
-
-	if len(categories) == 0 {
-		categories = []Category{
-			Harmless,
-			Delicate,
-			Offensive,
-		}
-	}
 
 	if err := database.Connection.Where(
 		&Statement{
-			Category: categories[rand.Intn(len(categories))],
+			Category: category,
 		}).Order(gorm.Expr("random()")).First(&statement).Error; err != nil {
 
 		return statement, err

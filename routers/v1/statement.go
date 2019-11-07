@@ -55,7 +55,7 @@ func GetStatementById(c *gin.Context) {
 		return
 	}
 
-	statement, err := models.FindStatementById(id)
+	statement, err := models.GetStatementById(id)
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -89,7 +89,7 @@ func GetRandomStatement(c *gin.Context) {
 		categories = append(categories, category)
 	}
 
-	statement, err := models.GetRandomStatement(categories...)
+	statement, err := models.GetRandomStatementByCategory(models.GetRandomCategory())
 
 	if err != nil {
 		_ = g.C.Error(err)
@@ -112,7 +112,7 @@ func DeleteStatement(c *gin.Context) {
 		return
 	}
 
-	statement, err := models.FindStatementById(id)
+	statement, err := models.GetStatementById(id)
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
