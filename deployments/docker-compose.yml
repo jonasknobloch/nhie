@@ -1,0 +1,83 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: build/docker/go/Dockerfile
+    image: nhie_api
+    restart: always
+    volumes:
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+    depends_on:
+      - db
+      - nginx-proxy
+      - nginx-proxy-letsencrypt
+    environment:
+      GIN_MODE: release
+      NHIE_DB_HOST: db
+      NHIE_DB_PORT: 5432
+      NHIE_DB_NAME: ${NHIE_DB_NAME}
+      NHIE_DB_USER: ${NHIE_DB_USER}
+      NHIE_DB_PASS: ${NHIE_DB_PASS}
+      NHIE_ADMIN_USER: ${NHIE_ADMIN_USER}
+      NHIE_ADMIN_PASS: ${NHIE_ADMIN_PASS}
+      VIRTUAL_HOST: api.neverhaveiever.io
+      LETSENCRYPT_HOST: api.neverhaveiever.io
+
+  db:
+    build: ../build/docker/db
+    image: nhie_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${NHIE_DB_NAME}
+      POSTGRES_USER: ${NHIE_DB_USER}
+      POSTGRES_PASSWORD: ${NHIE_DB_PASS}
+    volumes:
+      - /mnt/postgresql/data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+      - nginx-proxy
+      - nginx-proxy-letsencrypt
+    environment:
+      ADMINER_DESIGN: flat
+      VIRTUAL_HOST: adminer.neverhaveiever.io
+      LETSENCRYPT_HOST: adminer.neverhaveiever.io
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      DHPARAM_GENERATION: 'false'
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: 'true'
+
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: always
+    environment:
+      NGINX_PROXY_CONTAINER: api_nginx-proxy
+      DEFAULT_EMAIL: neverhaveiever@jonasknopbloch.me
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    depends_on:
+      - nginx-proxy
+
+volumes:
+  certs:   # to store certificates
+  vhost.d: # to change the configuration of vhosts
+  html:    # to write http-01 challenge files
