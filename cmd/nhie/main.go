@@ -3,16 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/neverhaveiever-io/api/database"
-	"github.com/neverhaveiever-io/api/models"
-	"github.com/neverhaveiever-io/api/routers"
+	"github.com/neverhaveiever-io/api/internal/app/router"
+	"github.com/neverhaveiever-io/api/internal/database"
+	"github.com/neverhaveiever-io/api/internal/statement"
 	"github.com/spf13/viper"
 )
 
 func main() {
-	defer database.Connection.Close()
+	defer database.C.Close()
 
 	user := viper.GetString("admin_user")
 	pass := viper.GetString("admin_pass")
@@ -25,15 +23,9 @@ func main() {
 		panic("no admin password")
 	}
 
-	router := routers.InitRouter(gin.BasicAuth(gin.Accounts{
+	router.Init(gin.BasicAuth(gin.Accounts{
 		user: pass,
 	}))
-
-	err := router.Run()
-
-	if err != nil {
-		panic("unable initialize router")
-	}
 }
 
 func init() {
@@ -54,13 +46,9 @@ func init() {
 		viper.GetString("db_pass"),
 	)
 
-	var err error
-	database.Connection, err = gorm.Open("postgres", connString)
-
-	if err != nil {
-		panic("unable to connect to database: " + err.Error())
-	}
+	// initialize db connection
+	database.Init(connString)
 
 	// migrate model
-	database.Connection.AutoMigrate(&models.Statement{})
+	database.C.AutoMigrate(&statement.Statement{})
 }

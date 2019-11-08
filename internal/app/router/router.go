@@ -1,13 +1,13 @@
-package routers
+package router
 
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/neverhaveiever-io/api/middleware/error"
-	"github.com/neverhaveiever-io/api/routers/v1"
+	"github.com/neverhaveiever-io/api/internal/app/middleware/error"
+	v1 "github.com/neverhaveiever-io/api/internal/app/router/v1"
 )
 
-func InitRouter(auth gin.HandlerFunc) *gin.Engine {
+func Init(auth gin.HandlerFunc) {
 
 	router := gin.Default()
 
@@ -23,5 +23,7 @@ func InitRouter(auth gin.HandlerFunc) *gin.Engine {
 		authorized.DELETE("/statements/:id", v1.DeleteStatement)
 	}
 
-	return router
+	if err := router.Run(); err != nil {
+		panic("unable initialize router")
+	}
 }
