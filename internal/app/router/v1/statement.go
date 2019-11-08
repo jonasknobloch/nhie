@@ -7,7 +7,7 @@ import (
 	"github.com/neverhaveiever-io/api/internal/app"
 	"github.com/neverhaveiever-io/api/internal/category"
 	"github.com/neverhaveiever-io/api/internal/statement"
-	"github.com/neverhaveiever-io/api/pkg/problems"
+	"github.com/neverhaveiever-io/api/pkg/problem"
 	"github.com/neverhaveiever-io/api/pkg/unique"
 	"net/http"
 	"strings"
@@ -19,18 +19,18 @@ func AddStatement(ctx *gin.Context) {
 	var s statement.Statement
 
 	if err := ctx.ShouldBind(&s); err != nil {
-		g.ErrorResponse(problems.Default(http.StatusBadRequest))
+		g.ErrorResponse(problem.Default(http.StatusBadRequest))
 		return
 	}
 
 	if err := s.Validate(); err != nil {
-		g.ErrorResponse(problems.ValidationError(err))
+		g.ErrorResponse(problem.ValidationError(err))
 		return
 	}
 
 	if err := s.Save(); err != nil {
 		_ = g.C.Error(err)
-		g.ErrorResponse(problems.Default(http.StatusInternalServerError))
+		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -52,7 +52,7 @@ func GetStatementByID(ctx *gin.Context) {
 	id, err := uuid.Parse(ctx.Params.ByName("id"))
 
 	if err != nil {
-		g.ErrorResponse(problems.Default(http.StatusBadRequest))
+		g.ErrorResponse(problem.Default(http.StatusBadRequest))
 		return
 	}
 
@@ -60,12 +60,12 @@ func GetStatementByID(ctx *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			g.ErrorResponse(problems.NoSuchStatement())
+			g.ErrorResponse(problem.NoSuchStatement())
 			return
 		}
 
 		_ = g.C.Error(err)
-		g.ErrorResponse(problems.Default(http.StatusInternalServerError))
+		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -83,7 +83,7 @@ func GetRandomStatement(ctx *gin.Context) {
 		c := category.Category(v)
 
 		if err := c.Validate(); err != nil {
-			g.ErrorResponse(problems.ValidationError(err))
+			g.ErrorResponse(problem.ValidationError(err))
 			return
 		}
 
@@ -94,7 +94,7 @@ func GetRandomStatement(ctx *gin.Context) {
 
 	if err != nil {
 		_ = g.C.Error(err)
-		g.ErrorResponse(problems.Default(http.StatusInternalServerError))
+		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -109,7 +109,7 @@ func DeleteStatement(ctx *gin.Context) {
 	id, err := uuid.Parse(ctx.Params.ByName("id"))
 
 	if err != nil {
-		g.ErrorResponse(problems.Default(http.StatusBadRequest))
+		g.ErrorResponse(problem.Default(http.StatusBadRequest))
 		return
 	}
 
@@ -117,18 +117,18 @@ func DeleteStatement(ctx *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			g.ErrorResponse(problems.NoSuchStatement())
+			g.ErrorResponse(problem.NoSuchStatement())
 			return
 		}
 
 		_ = g.C.Error(err)
-		g.ErrorResponse(problems.Default(http.StatusInternalServerError))
+		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}
 
 	if err := s.Delete(); err != nil {
 		_ = g.C.Error(err)
-		g.ErrorResponse(problems.Default(http.StatusInternalServerError))
+		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -139,5 +139,5 @@ func EditStatement(ctx *gin.Context) {
 	g := app.Gin{C: ctx}
 
 	// TODO: implement
-	g.ErrorResponse(problems.Default(http.StatusNotImplemented))
+	g.ErrorResponse(problem.Default(http.StatusNotImplemented))
 }
