@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/neverhaveiever-io/api/pkg/problems"
+	"github.com/neverhaveiever-io/api/pkg/problem"
 )
 
 func (g *Gin) Response(httpCode int, data ...interface{}) {
@@ -12,7 +12,7 @@ func (g *Gin) Response(httpCode int, data ...interface{}) {
 	}
 }
 
-func (g *Gin) ErrorResponse(problem *problems.Problem) {
-	g.C.Header("Content-Type", problems.MediaType+"; charset=utf-8")
-	g.C.JSON(problem.Status, problem)
+func (g *Gin) ErrorResponse(p *problem.Problem) {
+	g.C.Header("Content-Type", problem.MediaType+"; charset=utf-8")
+	g.C.JSON(p.Status, p)
 }
