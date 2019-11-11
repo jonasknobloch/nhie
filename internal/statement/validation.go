@@ -1,17 +1,18 @@
 package statement
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation"
+	ov "github.com/go-ozzo/ozzo-validation"
+	"github.com/neverhaveiever-io/api/internal/validation"
 	"regexp"
 )
 
 func (s Statement) Validate() error {
-	return validation.ValidateStruct(&s,
-		validation.Field(
+	return validation.Reformat(ov.ValidateStruct(&s,
+		ov.Field(
 			&s.Statement,
-			validation.Required,
-			validation.Match(regexp.MustCompile(`Never\shave\sI\sever\s.+\.$`)),
+			ov.Required,
+			ov.Match(regexp.MustCompile(`Never\shave\sI\sever\s.+\.$`)),
 		),
-		validation.Field(&s.Category),
-	)
+		ov.Field(&s.Category),
+	))
 }
