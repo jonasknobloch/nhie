@@ -1,11 +1,14 @@
 package category
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	ov "github.com/go-ozzo/ozzo-validation"
+	"github.com/neverhaveiever-io/api/internal/validation"
+)
 
 func (c Category) Validate() error {
 	// https://github.com/go-ozzo/ozzo-validation/issues/81
-	return validation.Validate(string(c),
-		validation.Required,
-		validation.In(string(Harmless), string(Delicate), string(Offensive)),
-	)
+	return validation.Reformat(ov.Validate(string(c),
+		ov.Required,
+		ov.In(string(Harmless), string(Delicate), string(Offensive)),
+	))
 }
