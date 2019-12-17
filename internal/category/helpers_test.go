@@ -9,13 +9,30 @@ func TestGetRandom(t *testing.T) {
 		Offensive,
 	}
 
-	category := GetRandom()
-
-	for _, c := range categories {
-		if c == category {
-			return
-		}
+	cases := []struct {
+		input, output []Category
+	}{
+		{nil, categories},
+		{categories, categories},
+		{categories[:1], categories[:1]},
+		{categories[:2], categories[:2]},
 	}
 
-	t.Fatalf("Unexpected category. %+v", category)
+	for key, testCase := range cases {
+		category := GetRandom(testCase.input...)
+
+		// category found in expected output
+		found := false
+
+		for _, c := range testCase.output {
+			if c == category {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			t.Fatalf("%d: Unexpected category: %+v", key, category)
+		}
+	}
 }
