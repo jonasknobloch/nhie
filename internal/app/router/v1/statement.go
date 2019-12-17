@@ -93,6 +93,11 @@ func GetRandomStatement(ctx *gin.Context) {
 	s, err := statement.GetRandomByCategory(category.GetRandom())
 
 	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			g.ErrorResponse(problem.NoSuchStatement())
+			return
+		}
+
 		_ = g.C.Error(err)
 		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
