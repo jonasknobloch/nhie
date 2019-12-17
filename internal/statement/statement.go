@@ -12,7 +12,7 @@ type (
 	Statement struct {
 		ID        uuid.UUID         `gorm:"primary_key;type:uuid"`
 		Statement string            `gorm:"unique;not null" json:"statement"`
-		Category  category.Category `gorm:"not null" json:"category" sql:"type:category"`
+		Category  category.Category `gorm:"not null" json:"category"`
 		CreatedAt time.Time         `json:"-"`
 		UpdatedAt time.Time         `json:"-"`
 		DeletedAt *time.Time        `sql:"index" json:"-"`
