@@ -90,7 +90,7 @@ func GetRandomStatement(ctx *gin.Context) {
 		categories = append(categories, c)
 	}
 
-	s, err := statement.GetRandomByCategory(category.GetRandom())
+	s, err := statement.GetRandomByCategory(category.GetRandom(categories...))
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
