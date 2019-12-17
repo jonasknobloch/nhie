@@ -2,16 +2,22 @@ package category
 
 import (
 	"math/rand"
-	"time"
 )
 
-func GetRandom() Category {
-	categories := []Category{
-		Harmless,
-		Delicate,
-		Offensive,
+func GetRandom(categories ...Category) Category {
+	if len(categories) == 0 {
+		categories = []Category{
+			Harmless,
+			Delicate,
+			Offensive,
+		}
 	}
 
-	rand.Seed(time.Now().Unix())
-	return categories[rand.Intn(len(categories))]
+	length := len(categories)
+
+	if length == 1 {
+		return categories[0]
+	}
+
+	return categories[rand.Intn(length)]
 }
