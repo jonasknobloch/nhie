@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: build/docker/go/Dockerfile
-    image: nhie_api
+    image: nhie
     restart: always
     volumes:
       - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
@@ -25,8 +25,7 @@ services:
       LETSENCRYPT_HOST: ***REMOVED***
 
   db:
-    build: ../build/docker/db
-    image: nhie_db
+    image: postgres
     restart: always
     environment:
       POSTGRES_DB: ${NHIE_DB_NAME}

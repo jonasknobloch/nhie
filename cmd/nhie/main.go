@@ -49,6 +49,9 @@ func init() {
 	// initialize db connection
 	database.Init(connString)
 
+	// create category type
+	database.C.Exec("create type category as enum ('harmless', 'delicate', 'offensive')")
+
 	// migrate model
 	database.C.AutoMigrate(&statement.Statement{})
 }
