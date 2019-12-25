@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 	"github.com/neverhaveiever-io/api/internal/app"
 	"github.com/neverhaveiever-io/api/internal/category"
 	"github.com/neverhaveiever-io/api/internal/statement"
@@ -29,7 +30,15 @@ func AddStatement(ctx *gin.Context) {
 	}
 
 	if err := s.Save(); err != nil {
+
 		_ = g.C.Error(err)
+
+		// catch unique_violation with error code 23505
+		if e, ok := err.(*pq.Error); ok && e.Code == "23505" {
+			g.ErrorResponse(problem.StatementAlreadyExists())
+			return
+		}
+
 		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
 	}

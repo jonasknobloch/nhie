@@ -40,3 +40,12 @@ func ValidationError(errors error) *Problem {
 		Errors: errors,
 	}
 }
+
+func StatementAlreadyExists() *Problem {
+	return &Problem{
+		Type:   "about:blank",
+		Title:  http.StatusText(http.StatusConflict),
+		Status: http.StatusConflict,
+		Detail: "Sorry, that statement already exists.",
+	}
+}
