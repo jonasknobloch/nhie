@@ -21,8 +21,8 @@ services:
       NHIE_DB_PASS: ${NHIE_DB_PASS}
       NHIE_ADMIN_USER: ${NHIE_ADMIN_USER}
       NHIE_ADMIN_PASS: ${NHIE_ADMIN_PASS}
-      VIRTUAL_HOST: ***REMOVED***
-      LETSENCRYPT_HOST: ***REMOVED***
+      VIRTUAL_HOST: ${NHIE_API_HOST}
+      LETSENCRYPT_HOST: ${NHIE_API_HOST}
 
   db:
     image: postgres
@@ -43,8 +43,8 @@ services:
       - nginx-proxy-letsencrypt
     environment:
       ADMINER_DESIGN: flat
-      VIRTUAL_HOST: ***REMOVED***
-      LETSENCRYPT_HOST: ***REMOVED***
+      VIRTUAL_HOST: ${NHIE_ADMINER_HOST}
+      LETSENCRYPT_HOST: ${NHIE_ADMINER_HOST}
 
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -67,7 +67,7 @@ services:
     restart: always
     environment:
       NGINX_PROXY_CONTAINER: api_nginx-proxy
-      DEFAULT_EMAIL: ***REMOVED***
+      DEFAULT_EMAIL: ${NHIE_LE_DEFAULT_EMAIL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
