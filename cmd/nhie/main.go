@@ -23,9 +23,9 @@ func main() {
 		panic("no admin password")
 	}
 
-	router.Init(gin.BasicAuth(gin.Accounts{
+	router.Init(gin.Accounts{
 		user: pass,
-	}))
+	})
 }
 
 func init() {
