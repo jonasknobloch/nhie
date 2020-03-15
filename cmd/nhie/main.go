@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/neverhaveiever-io/api/internal/app/router"
 	"github.com/neverhaveiever-io/api/internal/database"
 	"github.com/neverhaveiever-io/api/internal/statement"
@@ -12,20 +11,7 @@ import (
 func main() {
 	defer database.C.Close()
 
-	user := viper.GetString("admin_user")
-	pass := viper.GetString("admin_pass")
-
-	if user == "" {
-		panic("no admin user")
-	}
-
-	if pass == "" {
-		panic("no admin password")
-	}
-
-	router.Init(gin.Accounts{
-		user: pass,
-	})
+	router.Init()
 }
 
 func init() {
