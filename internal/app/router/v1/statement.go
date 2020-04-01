@@ -8,6 +8,7 @@ import (
 	"github.com/neverhaveiever-io/api/internal/app"
 	"github.com/neverhaveiever-io/api/internal/category"
 	"github.com/neverhaveiever-io/api/internal/statement"
+	"github.com/neverhaveiever-io/api/internal/translate"
 	"github.com/neverhaveiever-io/api/pkg/problem"
 	"github.com/neverhaveiever-io/api/pkg/unique"
 	"net/http"
@@ -78,6 +79,11 @@ func GetStatementByID(ctx *gin.Context) {
 		return
 	}
 
+	if g.C.Query("language") != "" {
+		tags := unique.Strings(append(ctx.QueryArray("language"), ctx.QueryArray("language[]")...))
+		s.FetchTranslations(translate.MatchTags(tags...)...)
+	}
+
 	g.Response(http.StatusOK, s)
 }
 
@@ -110,6 +116,11 @@ func GetRandomStatement(ctx *gin.Context) {
 		_ = g.C.Error(err)
 		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
 		return
+	}
+
+	if g.C.Query("language") != "" {
+		tags := unique.Strings(append(ctx.QueryArray("language"), ctx.QueryArray("language[]")...))
+		s.FetchTranslations(translate.MatchTags(tags...)...)
 	}
 
 	// a redirect might make sense but the resulting round trip is just not worth it

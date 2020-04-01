@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/neverhaveiever-io/api/internal/app/router"
+	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/neverhaveiever-io/api/internal/database"
 	"github.com/neverhaveiever-io/api/internal/statement"
+	"github.com/neverhaveiever-io/api/internal/translate"
 	"github.com/spf13/viper"
 )
 
@@ -34,6 +36,13 @@ func init() {
 
 	// initialize db connection
 	database.Init(connString)
+
+	// TODO: handle error
+	// initialize translate
+	_ = translate.Init()
+
+	// initialize cache
+	cache.Init()
 
 	// create category type
 	database.C.Exec("create type category as enum ('harmless', 'delicate', 'offensive')")
