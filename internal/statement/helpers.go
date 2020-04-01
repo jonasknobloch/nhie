@@ -7,17 +7,17 @@ import (
 	"github.com/neverhaveiever-io/api/internal/database"
 )
 
-func GetByID(ID uuid.UUID) (Statement, error) {
+func GetByID(ID uuid.UUID) (*Statement, error) {
 	var statement Statement
 
 	if err := database.C.Where(&Statement{ID: ID}).Find(&statement).Error; err != nil {
-		return statement, err
+		return nil, err
 	}
 
-	return statement, nil
+	return &statement, nil
 }
 
-func GetRandomByCategory(category category.Category) (Statement, error) {
+func GetRandomByCategory(category category.Category) (*Statement, error) {
 	var statement Statement
 
 	if err := database.C.Where(
@@ -25,8 +25,8 @@ func GetRandomByCategory(category category.Category) (Statement, error) {
 			Category: category,
 		}).Order(gorm.Expr("random()")).First(&statement).Error; err != nil {
 
-		return statement, err
+		return nil, err
 	}
 
-	return statement, nil
+	return &statement, nil
 }
