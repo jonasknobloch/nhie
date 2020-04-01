@@ -48,25 +48,16 @@ func AddStatement(ctx *gin.Context) {
 }
 
 func GetStatement(ctx *gin.Context) {
+	g := app.Gin{C: ctx}
+
+	var s *statement.Statement
+	var err error
+
 	if r := strings.Split(ctx.Request.URL.String(), "/random"); len(r) == 2 { // && r[1] == ""
-		GetRandomStatement(ctx)
+		s, err = getRandomStatement(g)
 	} else {
-		GetStatementByID(ctx)
+		s, err = getStatementByID(g)
 	}
-}
-
-func GetStatementByID(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
-
-	// ctx.Params.ByName("id") returns an empty string if no matching key is found
-	id, err := uuid.Parse(ctx.Params.ByName("id"))
-
-	if err != nil {
-		g.ErrorResponse(problem.Default(http.StatusBadRequest))
-		return
-	}
-
-	s, err := statement.GetByID(id)
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -79,42 +70,8 @@ func GetStatementByID(ctx *gin.Context) {
 		return
 	}
 
-	if g.C.Query("language") != "" {
-		tags := unique.Strings(append(ctx.QueryArray("language"), ctx.QueryArray("language[]")...))
-		s.FetchTranslations(translate.MatchTags(tags...)...)
-	}
-
-	g.Response(http.StatusOK, s)
-}
-
-func GetRandomStatement(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
-
-	var s statement.Statement
-
-	var categories []category.Category
-
-	for _, v := range unique.Strings(append(ctx.QueryArray("category"), ctx.QueryArray("category[]")...)) {
-		c := category.Category(v)
-
-		if err := c.Validate(); err != nil {
-			g.ErrorResponse(problem.ValidationError(err))
-			return
-		}
-
-		categories = append(categories, c)
-	}
-
-	s, err := statement.GetRandomByCategory(category.GetRandom(categories...))
-
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			g.ErrorResponse(problem.NoSuchStatement())
-			return
-		}
-
-		_ = g.C.Error(err)
-		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+	// error already handled
+	if s == nil {
 		return
 	}
 
@@ -125,6 +82,35 @@ func GetRandomStatement(ctx *gin.Context) {
 
 	// a redirect might make sense but the resulting round trip is just not worth it
 	g.Response(http.StatusOK, s)
+}
+
+func getStatementByID(g app.Gin) (*statement.Statement, error) {
+	// g.C.Params.ByName("id") returns an empty string if no matching key is found
+	id, err := uuid.Parse(g.C.Params.ByName("id"))
+
+	if err != nil {
+		g.ErrorResponse(problem.Default(http.StatusBadRequest))
+		return nil, nil
+	}
+
+	return statement.GetByID(id)
+}
+
+func getRandomStatement(g app.Gin) (*statement.Statement, error) {
+	var categories []category.Category
+
+	for _, v := range unique.Strings(append(g.C.QueryArray("category"), g.C.QueryArray("category[]")...)) {
+		c := category.Category(v)
+
+		if err := c.Validate(); err != nil {
+			g.ErrorResponse(problem.ValidationError(err))
+			return nil, nil
+		}
+
+		categories = append(categories, c)
+	}
+
+	return statement.GetRandomByCategory(category.GetRandom(categories...))
 }
 
 func DeleteStatement(ctx *gin.Context) {
