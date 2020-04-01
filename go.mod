@@ -3,7 +3,7 @@ module github.com/neverhaveiever-io/api
 go 1.12
 
 require (
-	cloud.google.com/go v0.56.0 // indirect
+	cloud.google.com/go v0.56.0
 	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
 	github.com/gin-contrib/cors v1.3.0
@@ -16,4 +16,6 @@ require (
 	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/spf13/viper v1.4.0
 	github.com/zsais/go-gin-prometheus v0.1.0
+	golang.org/x/text v0.3.2
+	google.golang.org/genproto v0.0.0-20200331122359-1ee6d9798940
 )
