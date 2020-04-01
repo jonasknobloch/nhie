@@ -8,6 +8,7 @@ import (
 	"github.com/neverhaveiever-io/api/internal/category"
 	"github.com/neverhaveiever-io/api/internal/database"
 	"os"
+	"reflect"
 	"regexp"
 	"testing"
 	"time"
@@ -76,7 +77,7 @@ func TestGetByID(t *testing.T) {
 		t.Fatalf("Unexpected error. %+v", err)
 	}
 
-	if statement != *expected {
+	if !reflect.DeepEqual(*statement, *expected) {
 		t.Fatalf("Unexpected struct contents. %+v", statement)
 	}
 }
@@ -113,7 +114,7 @@ func TestGetRandomByCategory(t *testing.T) {
 		t.Fatalf("Unexpected error. %+v", err)
 	}
 
-	if statement != *expected {
+	if !reflect.DeepEqual(*statement, *expected) {
 		t.Fatalf("Unexpected struct contents. %+v", statement)
 	}
 }
