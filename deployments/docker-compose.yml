@@ -10,6 +10,7 @@ services:
       - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
     depends_on:
       - db
+      - redis
       - nginx-proxy
       - nginx-proxy-letsencrypt
     environment:
@@ -33,6 +34,13 @@ services:
       POSTGRES_PASSWORD: ${NHIE_DB_PASS}
     volumes:
       - /mnt/postgresql/data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+    - /mnt/redis/data:/data
 
   adminer:
     image: adminer
