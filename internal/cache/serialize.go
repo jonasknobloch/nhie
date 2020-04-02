@@ -17,7 +17,7 @@ func (g *gobSerializer) serialize(c interface{}) ([]byte, error) {
 	err := enc.Encode(c)
 
 	if err != nil {
-		return nil, err
+		return nil, newSerializeError(err)
 	}
 
 	return buf.Bytes(), nil
@@ -25,5 +25,11 @@ func (g *gobSerializer) serialize(c interface{}) ([]byte, error) {
 
 func (g *gobSerializer) deserialize(d []byte, c interface{}) error {
 	dec := gob.NewDecoder(bytes.NewBuffer(d))
-	return dec.Decode(&c)
+	err := dec.Decode(&c)
+
+	if err != nil {
+		return newSerializeError(err)
+	}
+
+	return nil
 }
