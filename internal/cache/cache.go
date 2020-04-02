@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"errors"
+	"github.com/go-redis/redis"
 	"strings"
 	"time"
 )
@@ -19,8 +19,12 @@ func (k Key) String() string {
 func Retrieve(k Key) (interface{}, error) {
 	g := C.Get(k.String())
 
-	if g.Val() == "" {
-		return nil, errors.New("not in cache")
+	if err := g.Err(); err != nil {
+		if err == redis.Nil {
+			return nil, newError(ErrKeyNotFound)
+		}
+
+		return nil, newError(err)
 	}
 
 	var i interface{}
@@ -29,7 +33,7 @@ func Retrieve(k Key) (interface{}, error) {
 	err := serializer.deserialize([]byte(g.String()), &i)
 
 	if err != nil {
-		return nil, err
+		return nil, newError(err)
 	}
 
 	return i, nil
@@ -40,11 +44,11 @@ func Store(k Key, i interface{}, exp time.Duration) error {
 	b, err := serializer.serialize(i)
 
 	if err != nil {
-		return err
+		return newError(err)
 	}
 
-	C.Set(k.String(), b, exp)
-	return nil
+	s := C.Set(k.String(), b, exp)
+	return s.Err()
 }
 
 func Clear(k Key) {
