@@ -1,11 +1,13 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 	"github.com/neverhaveiever-io/api/internal/app"
+	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/neverhaveiever-io/api/internal/category"
 	"github.com/neverhaveiever-io/api/internal/statement"
 	"github.com/neverhaveiever-io/api/internal/translate"
@@ -77,7 +79,30 @@ func GetStatement(ctx *gin.Context) {
 
 	if g.C.Query("language") != "" {
 		tags := unique.Strings(append(ctx.QueryArray("language"), ctx.QueryArray("language[]")...))
-		s.FetchTranslations(translate.MatchTags(tags...)...)
+		matchedTags, err := translate.MatchTags(tags...)
+
+		if err != nil {
+			var e *translate.MatchingError
+			if errors.As(err, &e) {
+				g.ErrorResponse(translate.NewMatchingErrorProblem(e))
+				return
+			} else {
+				_ = g.C.Error(err)
+				g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+				return
+			}
+		}
+
+		if err := s.FetchTranslations(matchedTags...); err != nil {
+			_ = g.C.Error(err)
+
+			// might be just cache error
+			var e *cache.Error
+			if !errors.As(err, &e) {
+				g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+				return
+			}
+		}
 	}
 
 	// a redirect might make sense but the resulting round trip is just not worth it
