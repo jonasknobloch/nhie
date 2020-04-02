@@ -3,8 +3,10 @@ package translate
 import (
 	translate "cloud.google.com/go/translate/apiv3"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/spf13/viper"
 	"golang.org/x/text/language"
 	translatepb "google.golang.org/genproto/googleapis/cloud/translate/v3"
@@ -53,29 +55,71 @@ func Init() error {
 	return nil
 }
 
-func MatchTags(inputs ...string) []language.Tag {
+func MatchTags(inputs ...string) ([]language.Tag, error) {
 	var tags []language.Tag
 
 	for _, input := range inputs {
 		tag, _, confidence := m.Match(language.Make(input))
 
-		// TODO: error if no match
 		if confidence == language.Exact {
 			tags = append(tags, tag)
+			continue
 		}
+
+		// parse returns ValueError if well formed
+		parsedTag, err := language.Parse(input)
+
+		// well formed but unknown language tag
+		if _, ok := err.(language.ValueError); ok {
+			return nil, newError(newMatchingError(ErrUnknownLanguageTag, input, parsedTag))
+		}
+
+		// invalid language tag
+		if err != nil {
+			return nil, newError(newMatchingError(ErrInvalidLanguageTag, input, language.Tag{}))
+		}
+
+		return nil, newError(newMatchingError(ErrUnsupportedLanguage, input, parsedTag))
 	}
 
-	return tags
+	return tags, nil
 }
 
 func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Tag) (string, error) {
+	var ttr *translatepb.TranslateTextResponse
+	var cacheErr error
+	var fetchErr error
 
-	ttr, err := retrieveFromCache(uuid, tag, tc.model)
+	ttr, cacheErr = retrieveFromCache(uuid, tag, tc.model)
 
-	if err == nil && len(ttr.Translations) > 0 {
-		return ttr.Translations[0].TranslatedText, nil
+	if cacheErr != nil {
+		ttr, fetchErr = tc.fetchFromApi(s, tag)
 	}
 
+	// failed fetch
+	if fetchErr != nil {
+		return "", newError(fetchErr)
+	}
+
+	// store if possible
+	if errors.Is(cacheErr, cache.ErrKeyNotFound) {
+		cacheErr = storeInCache(uuid, tag, tc.model, ttr)
+	}
+
+	// verify a translation is present
+	if len(ttr.Translations) == 0 {
+		return "", newError(ErrNoTranslationReceived)
+	}
+
+	// unwrapped cache error might be nil
+	if errors.Unwrap(cacheErr) != nil {
+		return ttr.Translations[0].TranslatedText, newError(cacheErr)
+	}
+
+	return ttr.Translations[0].TranslatedText, nil
+}
+
+func (tc *TranslationClient) fetchFromApi(s string, tag language.Tag) (*translatepb.TranslateTextResponse, error) {
 	req := &translatepb.TranslateTextRequest{
 		Contents:           []string{s},
 		MimeType:           "text/plain",
@@ -85,20 +129,7 @@ func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Ta
 		Model:              fmt.Sprintf("projects/%s/locations/%s/models/%s", tc.project, tc.location, tc.model),
 	}
 
-	resp, err := tc.c.TranslateText(tc.ctx, req)
-
-	if err != nil {
-		panic("failed to translate text: " + err.Error())
-	}
-
-	if len(resp.Translations) == 0 {
-		// TODO: handle gracefully
-		panic("no translation received")
-	}
-
-	// TODO: handle error
-	_ = storeInCache(uuid, tag, tc.model, resp)
-	return resp.Translations[0].TranslatedText, nil
+	return tc.c.TranslateText(tc.ctx, req)
 }
 
 func BulkTranslate() {
