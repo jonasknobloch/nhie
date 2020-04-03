@@ -43,10 +43,6 @@ func (s *Statement) Delete() error {
 	return database.C.Delete(&s).Error
 }
 
-func (s *Statement) clearTranslations() {
-
-}
-
 func (s *Statement) FetchTranslations(tags ...language.Tag) error {
 	s.Translations = make(translations)
 
