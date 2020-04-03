@@ -25,7 +25,7 @@ func (g *gobSerializer) serialize(c interface{}) ([]byte, error) {
 
 func (g *gobSerializer) deserialize(d []byte, c interface{}) error {
 	dec := gob.NewDecoder(bytes.NewBuffer(d))
-	err := dec.Decode(&c)
+	err := dec.Decode(c)
 
 	if err != nil {
 		return newSerializeError(err)
