@@ -1,7 +1,6 @@
 package translate
 
 import (
-	"errors"
 	"github.com/google/uuid"
 	"github.com/neverhaveiever-io/api/internal/cache"
 	"golang.org/x/text/language"
@@ -9,19 +8,14 @@ import (
 )
 
 func retrieveFromCache(uuid uuid.UUID, tag language.Tag, model string) (*translatepb.TranslateTextResponse, error) {
+	var ttr translatepb.TranslateTextResponse
+
 	// translate:UUID:tag:model
 	key := cache.Key{"translate", uuid.String(), tag.String(), model}
-	r, err := cache.Retrieve(key)
+	err := cache.Retrieve(key, &ttr)
 
 	if err != nil {
 		return nil, err
-	}
-
-	ttr, ok := r.(translatepb.TranslateTextResponse)
-
-	if !ok {
-		// TODO: use problems / predefined error
-		return nil, errors.New("failed to deserialize cache contents")
 	}
 
 	return &ttr, nil

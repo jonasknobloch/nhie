@@ -16,27 +16,25 @@ func (k Key) String() string {
 	return strings.Join(k[:], ":")
 }
 
-func Retrieve(k Key) (interface{}, error) {
+func Retrieve(k Key, i interface{}) error {
 	g := C.Get(k.String())
 
 	if err := g.Err(); err != nil {
 		if err == redis.Nil {
-			return nil, newError(ErrKeyNotFound)
+			return newError(ErrKeyNotFound)
 		}
 
-		return nil, newError(err)
+		return newError(err)
 	}
-
-	var i interface{}
 
 	serializer := newGobSerializer()
-	err := serializer.deserialize([]byte(g.String()), &i)
+	err := serializer.deserialize([]byte(g.Val()), i)
 
 	if err != nil {
-		return nil, newError(err)
+		return newError(err)
 	}
 
-	return i, nil
+	return nil
 }
 
 func Store(k Key, i interface{}, exp time.Duration) error {
