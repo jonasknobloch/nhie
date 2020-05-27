@@ -8,6 +8,7 @@ services:
     restart: always
     volumes:
       - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+      - ${GOOGLE_APPLICATION_CREDENTIALS_HOST}:${GOOGLE_APPLICATION_CREDENTIALS}
     depends_on:
       - db
       - redis
@@ -22,6 +23,11 @@ services:
       NHIE_DB_PASS: ${NHIE_DB_PASS}
       NHIE_ADMIN_USER: ${NHIE_ADMIN_USER}
       NHIE_ADMIN_PASS: ${NHIE_ADMIN_PASS}
+      NHIE_REDIS_HOST: ${NHIE_REDIS_HOST}
+      NHIE_TRANSLATE_PROJECT: ${NHIE_TRANSLATE_PROJECT}
+      NHIE_TRANSLATE_LOCATION: ${NHIE_TRANSLATE_LOCATION}
+      NHIE_TRANSLATE_MODEL: ${NHIE_TRANSLATE_MODEL}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
       VIRTUAL_HOST: ${NHIE_API_HOST}
       LETSENCRYPT_HOST: ${NHIE_API_HOST}
 
@@ -40,7 +46,7 @@ services:
     restart: always
     command: redis-server --appendonly yes
     volumes:
-    - /mnt/redis/data:/data
+      - /mnt/redis/data:/data
 
   adminer:
     image: adminer
