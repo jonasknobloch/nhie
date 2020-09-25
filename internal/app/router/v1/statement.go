@@ -9,6 +9,7 @@ import (
 	"github.com/neverhaveiever-io/api/internal/app"
 	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/neverhaveiever-io/api/internal/category"
+	"github.com/neverhaveiever-io/api/internal/history"
 	"github.com/neverhaveiever-io/api/internal/statement"
 	"github.com/neverhaveiever-io/api/internal/translate"
 	"github.com/neverhaveiever-io/api/pkg/problem"
@@ -134,7 +135,47 @@ func getRandomStatement(g app.Gin) (*statement.Statement, error) {
 		categories = append(categories, c)
 	}
 
-	return statement.GetRandomByCategory(category.GetRandom(categories...))
+	s, err := statement.GetRandomByCategory(category.GetRandom(categories...))
+
+	if g.C.Query("game_id") == "" || err != nil {
+		return s, err
+	}
+
+	var gameID uuid.UUID
+	gameID, err = uuid.Parse(g.C.Query("game_id"))
+
+	if err != nil {
+		g.ErrorResponse(problem.Default(http.StatusBadRequest))
+		return nil, nil
+	}
+
+	var e bool
+	maxTries := 5 // TODO: from config
+
+	for tries := 0; tries < maxTries; tries++ {
+
+		if e, err = history.Exists(gameID, s); err != nil {
+			break
+		}
+
+		if err = history.Add(gameID, s); err != nil {
+			break
+		}
+
+		if !e {
+			break
+		}
+
+		// TODO: report to prometheus
+
+		s, err = statement.GetRandomByCategory(category.GetRandom(categories...))
+
+		if err != nil {
+			break
+		}
+	}
+
+	return s, err
 }
 
 func DeleteStatement(ctx *gin.Context) {

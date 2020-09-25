@@ -16,6 +16,18 @@ func (k Key) String() string {
 	return strings.Join(k[:], ":")
 }
 
+func Exists(k Key) (bool, error) {
+	if err := C.Get(k.String()).Err(); err != nil {
+		if err != redis.Nil {
+			return false, newError(err)
+		}
+
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func Retrieve(k Key, i interface{}) error {
 	g := C.Get(k.String())
 
