@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const ttl = 4 * time.Hour // TODO: use config value
+
 func Exists(gameID uuid.UUID, statement *statement.Statement) (bool, error) {
 	k := cache.Key{"history", gameID.String(), statement.ID.String()}
 	e, err := cache.Exists(k)
@@ -20,5 +22,5 @@ func Exists(gameID uuid.UUID, statement *statement.Statement) (bool, error) {
 
 func Add(gameID uuid.UUID, statement *statement.Statement) error {
 	k := cache.Key{"history", gameID.String(), statement.ID.String()}
-	return cache.Store(k, time.Now().String(), 4*time.Hour) // TODO: use config value
+	return cache.Store(k, time.Now().String(), ttl)
 }
