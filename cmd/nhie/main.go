@@ -5,6 +5,7 @@ import (
 	"github.com/neverhaveiever-io/api/internal/app/router"
 	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/neverhaveiever-io/api/internal/database"
+	"github.com/neverhaveiever-io/api/internal/history"
 	"github.com/neverhaveiever-io/api/internal/statement"
 	"github.com/neverhaveiever-io/api/internal/translate"
 	"github.com/spf13/viper"
@@ -43,6 +44,9 @@ func init() {
 
 	// initialize cache
 	cache.Init()
+
+	// initialize history
+	history.Init()
 
 	// create category type
 	database.C.Exec("create type category as enum ('harmless', 'delicate', 'offensive')")

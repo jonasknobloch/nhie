@@ -151,7 +151,7 @@ func getRandomStatement(g app.Gin) (*statement.Statement, error) {
 	}
 
 	var e bool
-	maxTries := 5 // TODO: from config
+	maxTries := history.MaxTries
 
 	for try := 0; try < maxTries; try++ {
 

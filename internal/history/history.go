@@ -4,10 +4,20 @@ import (
 	"github.com/google/uuid"
 	"github.com/neverhaveiever-io/api/internal/cache"
 	"github.com/neverhaveiever-io/api/internal/statement"
+	"github.com/spf13/viper"
 	"time"
 )
 
-const ttl = 4 * time.Hour // TODO: use config value
+var MaxTries int
+var ttl time.Duration
+
+func Init() {
+	viper.SetDefault("history_max_tries", 5)
+	viper.SetDefault("history_ttl", int64(4*time.Hour))
+
+	MaxTries = viper.GetInt("history_max_tries")
+	ttl = time.Duration(viper.GetInt64("history_ttl"))
+}
 
 func Exists(gameID uuid.UUID, statement *statement.Statement) (bool, error) {
 	k := cache.Key{"history", gameID.String(), statement.ID.String()}
