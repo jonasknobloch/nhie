@@ -17,16 +17,25 @@ func GetByID(ID uuid.UUID) (*Statement, error) {
 	return &statement, nil
 }
 
-func GetRandomByCategory(category category.Category) (*Statement, error) {
+func GetRandomByCategory(category category.Category) (*Statement, int64, error) {
 	var statement Statement
+	var poolSize int64
 
-	if err := database.C.Where(
-		&Statement{
-			Category: category,
-		}).Order(gorm.Expr("random()")).First(&statement).Error; err != nil {
+	err := database.C.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&Statement{}).Where(&Statement{Category: category}).Count(&poolSize).Error; err != nil {
+			return err
+		}
 
-		return nil, err
+		if err := tx.Where(&Statement{Category: category}).Order(gorm.Expr("random()")).First(&statement).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, 0, err
 	}
 
-	return &statement, nil
+	return &statement, poolSize, nil
 }

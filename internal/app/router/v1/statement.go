@@ -136,7 +136,7 @@ func getRandomStatement(g app.Gin) (*statement.Statement, error) {
 		categories = append(categories, c)
 	}
 
-	s, err := statement.GetRandomByCategory(category.GetRandom(categories...))
+	s, p, err := statement.GetRandomByCategory(category.GetRandom(categories...))
 
 	if g.C.Query("game_id") == "" || err != nil {
 		return s, err
@@ -153,7 +153,7 @@ func getRandomStatement(g app.Gin) (*statement.Statement, error) {
 	var e bool
 	maxTries := 5 // TODO: from config
 
-	for tries := 0; tries < maxTries; tries++ {
+	for try := 0; try < maxTries; try++ {
 
 		if e, err = history.Exists(gameID, s); err != nil {
 			break
@@ -167,9 +167,9 @@ func getRandomStatement(g app.Gin) (*statement.Statement, error) {
 			break
 		}
 
-		// TODO: report to prometheus
+		history.ReportDuplicate(try+1, maxTries, p)
 
-		s, err = statement.GetRandomByCategory(category.GetRandom(categories...))
+		s, p, err = statement.GetRandomByCategory(category.GetRandom(categories...))
 
 		if err != nil {
 			break
