@@ -13,3 +13,7 @@
 
 # Dotenv files
 *.env
+
+# Docker related files
+build/
+deployments/
