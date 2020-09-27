@@ -14,7 +14,6 @@ import (
 	"github.com/neverhaveiever-io/api/pkg/problem"
 	"github.com/neverhaveiever-io/api/pkg/unique"
 	"net/http"
-	"strings"
 )
 
 func AddStatement(ctx *gin.Context) {
@@ -55,7 +54,7 @@ func GetStatement(ctx *gin.Context) {
 	var s *statement.Statement
 	var err error
 
-	if r := strings.Split(ctx.Request.URL.String(), "/random"); len(r) == 2 { // && r[1] == ""
+	if g.C.Params.ByName("id") == "random" {
 		s, err = getRandomStatement(g)
 	} else {
 		s, err = getStatementByID(g)
