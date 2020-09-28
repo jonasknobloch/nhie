@@ -2,7 +2,7 @@ package statement
 
 import (
 	"github.com/google/uuid"
-	"github.com/neverhaveiever-io/api/internal/category"
+	"github.com/nhie-io/api/internal/category"
 	"testing"
 	"time"
 )

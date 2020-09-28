@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/neverhaveiever-io/api/pkg/problem"
+	"github.com/nhie-io/api/pkg/problem"
 )
 
 func (g *Gin) Response(httpCode int, data ...interface{}) {

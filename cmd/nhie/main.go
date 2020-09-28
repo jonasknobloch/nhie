@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/neverhaveiever-io/api/internal/app/router"
-	"github.com/neverhaveiever-io/api/internal/cache"
-	"github.com/neverhaveiever-io/api/internal/database"
-	"github.com/neverhaveiever-io/api/internal/history"
-	"github.com/neverhaveiever-io/api/internal/statement"
-	"github.com/neverhaveiever-io/api/internal/translate"
+	"github.com/nhie-io/api/internal/app/router"
+	"github.com/nhie-io/api/internal/cache"
+	"github.com/nhie-io/api/internal/database"
+	"github.com/nhie-io/api/internal/history"
+	"github.com/nhie-io/api/internal/statement"
+	"github.com/nhie-io/api/internal/translate"
 	"github.com/spf13/viper"
 )
 

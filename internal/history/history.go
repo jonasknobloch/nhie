@@ -2,8 +2,8 @@ package history
 
 import (
 	"github.com/google/uuid"
-	"github.com/neverhaveiever-io/api/internal/cache"
-	"github.com/neverhaveiever-io/api/internal/statement"
+	"github.com/nhie-io/api/internal/cache"
+	"github.com/nhie-io/api/internal/statement"
 	"github.com/spf13/viper"
 	"time"
 )

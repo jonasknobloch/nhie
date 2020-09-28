@@ -2,7 +2,7 @@ package translate
 
 import (
 	"github.com/google/uuid"
-	"github.com/neverhaveiever-io/api/internal/cache"
+	"github.com/nhie-io/api/internal/cache"
 	"golang.org/x/text/language"
 	translatepb "google.golang.org/genproto/googleapis/cloud/translate/v3"
 )

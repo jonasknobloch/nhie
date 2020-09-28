@@ -1,4 +1,4 @@
-module github.com/neverhaveiever-io/api
+module github.com/nhie-io/api
 
 go 1.14
 

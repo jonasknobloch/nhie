@@ -2,7 +2,7 @@ package translate
 
 import (
 	"fmt"
-	"github.com/neverhaveiever-io/api/pkg/problem"
+	"github.com/nhie-io/api/pkg/problem"
 	"golang.org/x/text/language/display"
 	"net/http"
 )

@@ -2,7 +2,7 @@ package category
 
 import (
 	ov "github.com/go-ozzo/ozzo-validation"
-	"github.com/neverhaveiever-io/api/internal/validation"
+	"github.com/nhie-io/api/internal/validation"
 )
 
 func (c Category) Validate() error {

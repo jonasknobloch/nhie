@@ -3,9 +3,9 @@ package router
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/neverhaveiever-io/api/internal/app/auth"
-	"github.com/neverhaveiever-io/api/internal/app/middleware/prometheus"
-	v1 "github.com/neverhaveiever-io/api/internal/app/router/v1"
+	"github.com/nhie-io/api/internal/app/auth"
+	"github.com/nhie-io/api/internal/app/middleware/prometheus"
+	v1 "github.com/nhie-io/api/internal/app/router/v1"
 )
 
 func Init() {
