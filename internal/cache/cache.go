@@ -28,36 +28,23 @@ func Exists(k Key) (bool, error) {
 	return true, nil
 }
 
-func Retrieve(k Key, i interface{}) error {
+func Retrieve(k Key) (string, error) {
 	g := C.Get(k.String())
 
 	if err := g.Err(); err != nil {
 		if err == redis.Nil {
-			return newError(ErrKeyNotFound)
+			return "", newError(ErrKeyNotFound)
 		}
 
-		return newError(err)
+		return "", newError(err)
 	}
 
-	serializer := newGobSerializer()
-	err := serializer.deserialize([]byte(g.Val()), i)
-
-	if err != nil {
-		return newError(err)
-	}
-
-	return nil
+	return g.Val(), nil
 }
 
-func Store(k Key, i interface{}, exp time.Duration) error {
-	serializer := newGobSerializer()
-	b, err := serializer.serialize(i)
+func Store(k Key, i string, exp time.Duration) error {
+	s := C.Set(k.String(), i, exp)
 
-	if err != nil {
-		return newError(err)
-	}
-
-	s := C.Set(k.String(), b, exp)
 	return s.Err()
 }
 
