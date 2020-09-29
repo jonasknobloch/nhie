@@ -77,9 +77,8 @@ func GetStatement(ctx *gin.Context) {
 		return
 	}
 
-	if g.C.Query("language") != "" {
-		tags := unique.Strings(append(ctx.QueryArray("language"), ctx.QueryArray("language[]")...))
-		matchedTags, err := translate.MatchTags(tags...)
+	if l := g.C.Query("language"); l != "" {
+		matchedTags, err := translate.MatchTags(l)
 
 		if err != nil {
 			var e *translate.MatchingError
@@ -93,7 +92,7 @@ func GetStatement(ctx *gin.Context) {
 			}
 		}
 
-		if err := s.FetchTranslations(matchedTags...); err != nil {
+		if err := s.Translate(matchedTags[0]); err != nil {
 			_ = g.C.Error(err)
 
 			// might be just cache error
