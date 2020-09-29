@@ -57,6 +57,16 @@ func init() {
 	}
 }
 
+func mockGetRandomByCategory(rows []*sqlmock.Rows) {
+	count := `SELECT count(*) FROM "statements"  WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1))`
+	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1)) ORDER BY random(),"statements"."id" ASC LIMIT 1`
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(regexp.QuoteMeta(count)).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(len(rows)))
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows...)
+	mock.ExpectCommit()
+}
+
 func TestGetByID(t *testing.T) {
 	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."id" = $1))`
 
@@ -95,9 +105,7 @@ func TestGetByIDReturnsErrorIfStatementNotFound(t *testing.T) {
 }
 
 func TestGetRandomByCategory(t *testing.T) {
-	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1)) ORDER BY random(),"statements"."id" ASC LIMIT 1`
-
-	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(
+	rows := []*sqlmock.Rows{
 		sqlmock.NewRows(row).AddRow(
 			expected.ID.String(),
 			expected.Statement,
@@ -106,9 +114,11 @@ func TestGetRandomByCategory(t *testing.T) {
 			expected.UpdatedAt,
 			expected.DeletedAt,
 		),
-	)
+	}
 
-	statement, err := GetRandomByCategory(category.Offensive)
+	mockGetRandomByCategory(rows)
+
+	statement, p, err := GetRandomByCategory(category.Offensive)
 
 	if err != nil {
 		t.Fatalf("Unexpected error. %+v", err)
@@ -117,16 +127,22 @@ func TestGetRandomByCategory(t *testing.T) {
 	if !reflect.DeepEqual(*statement, *expected) {
 		t.Fatalf("Unexpected struct contents. %+v", statement)
 	}
+
+	if p == 0 {
+		t.Fatalf("Pool should be empty.")
+	}
 }
 
 func TestGetRandomByCategoryReturnsErrorIfStatementNotFound(t *testing.T) {
-	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1)) ORDER BY random(),"statements"."id" ASC LIMIT 1`
+	mockGetRandomByCategory([]*sqlmock.Rows{sqlmock.NewRows(row)})
 
-	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(sqlmock.NewRows(row))
-
-	_, err := GetRandomByCategory(category.Offensive)
+	_, p, err := GetRandomByCategory(category.Offensive)
 
 	if !gorm.IsRecordNotFoundError(err) {
 		t.Fatalf("Unexpected error. %+v", err)
+	}
+
+	if p != 0 {
+		t.Fatalf("Expected empty pool, got %d instead.", p)
 	}
 }
