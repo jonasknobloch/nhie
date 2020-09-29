@@ -4,27 +4,24 @@ import (
 	"github.com/google/uuid"
 	"github.com/nhie-io/api/internal/cache"
 	"golang.org/x/text/language"
-	translatepb "google.golang.org/genproto/googleapis/cloud/translate/v3"
 )
 
-func retrieveFromCache(uuid uuid.UUID, tag language.Tag, model string) (*translatepb.TranslateTextResponse, error) {
-	var ttr translatepb.TranslateTextResponse
-
+func retrieveFromCache(uuid uuid.UUID, tag language.Tag, model string) (string, error) {
 	// translate:UUID:tag:model
 	key := cache.Key{"translate", uuid.String(), tag.String(), model}
-	err := cache.Retrieve(key, &ttr)
+	t, err := cache.Retrieve(key)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &ttr, nil
+	return t, nil
 }
 
-func storeInCache(uuid uuid.UUID, tag language.Tag, model string, ttr *translatepb.TranslateTextResponse) error {
+func storeInCache(uuid uuid.UUID, tag language.Tag, model string, t string) error {
 	// translate:UUID:tag:model
 	key := cache.Key{"translate", uuid.String(), tag.String(), model}
-	return cache.Store(key, ttr, 0)
+	return cache.Store(key, t, 0)
 }
 
 func ClearCache(uuid uuid.UUID) {

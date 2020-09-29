@@ -19,19 +19,3 @@ func (e *Error) Error() string {
 func (e *Error) Unwrap() error {
 	return e.error
 }
-
-type SerializeError struct {
-	error
-}
-
-func newSerializeError(err error) *SerializeError {
-	return &SerializeError{err}
-}
-
-func (e *SerializeError) Error() string {
-	return "serialize -> " + e.error.Error()
-}
-
-func (e *SerializeError) Unwrap() error {
-	return e.error
-}

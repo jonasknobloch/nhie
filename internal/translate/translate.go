@@ -90,20 +90,18 @@ func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Ta
 	var cacheErr error
 	var fetchErr error
 
-	ttr, cacheErr = retrieveFromCache(uuid, tag, tc.model)
+	var t string
 
-	if cacheErr != nil {
-		ttr, fetchErr = tc.fetchFromApi(s, tag)
+	// translation cached
+	if t, cacheErr = retrieveFromCache(uuid, tag, tc.model); cacheErr == nil {
+		return t, nil
 	}
+
+	ttr, fetchErr = tc.fetchFromApi(s, tag)
 
 	// failed fetch
 	if fetchErr != nil {
 		return "", newError(fetchErr)
-	}
-
-	// store if possible
-	if errors.Is(cacheErr, cache.ErrKeyNotFound) {
-		cacheErr = storeInCache(uuid, tag, tc.model, ttr)
 	}
 
 	// verify a translation is present
@@ -111,12 +109,19 @@ func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Ta
 		return "", newError(ErrNoTranslationReceived)
 	}
 
+	t = ttr.Translations[0].TranslatedText
+
+	// store if possible
+	if errors.Is(cacheErr, cache.ErrKeyNotFound) {
+		cacheErr = storeInCache(uuid, tag, tc.model, t)
+	}
+
 	// unwrapped cache error might be nil
 	if errors.Unwrap(cacheErr) != nil {
 		return ttr.Translations[0].TranslatedText, newError(cacheErr)
 	}
 
-	return ttr.Translations[0].TranslatedText, nil
+	return t, nil
 }
 
 func (tc *TranslationClient) fetchFromApi(s string, tag language.Tag) (*translatepb.TranslateTextResponse, error) {
