@@ -1,7 +1,6 @@
 package router
 
 import (
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nhie-io/api/internal/app/auth"
 	"github.com/nhie-io/api/internal/app/middleware/prometheus"
@@ -11,8 +10,6 @@ import (
 func Init() {
 
 	router := gin.Default()
-
-	router.Use(cors.Default())
 
 	// initialize prometheus metrics
 	prometheus.UseWithAuth(router, auth.Accounts([]string{"admin", "metrics"}))

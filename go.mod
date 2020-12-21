@@ -6,7 +6,6 @@ require (
 	cloud.google.com/go v0.56.0
 	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
-	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/go-redis/redis v6.15.7+incompatible
