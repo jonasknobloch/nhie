@@ -56,36 +56,6 @@ func Init() error {
 	return nil
 }
 
-func MatchTags(inputs ...string) ([]language.Tag, error) {
-	var tags []language.Tag
-
-	for _, input := range inputs {
-		tag, _, confidence := m.Match(language.Make(input))
-
-		if confidence == language.Exact {
-			tags = append(tags, tag)
-			continue
-		}
-
-		// parse returns ValueError if well formed
-		parsedTag, err := language.Parse(input)
-
-		// well formed but unknown language tag
-		if _, ok := err.(language.ValueError); ok {
-			return nil, newError(newMatchingError(ErrUnknownLanguageTag, input, parsedTag))
-		}
-
-		// invalid language tag
-		if err != nil {
-			return nil, newError(newMatchingError(ErrInvalidLanguageTag, input, language.Tag{}))
-		}
-
-		return nil, newError(newMatchingError(ErrUnsupportedLanguage, input, parsedTag))
-	}
-
-	return tags, nil
-}
-
 func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Tag) (string, error) {
 	var ttr *translatepb.TranslateTextResponse
 	var cacheErr error

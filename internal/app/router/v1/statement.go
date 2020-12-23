@@ -78,7 +78,7 @@ func GetStatement(ctx *gin.Context) {
 	}
 
 	if l := g.C.Query("language"); l != "" {
-		matchedTags, err := translate.MatchTags(l)
+		matchedTag, err := translate.MatchTag(l)
 
 		if err != nil {
 			var e *translate.MatchingError
@@ -92,8 +92,8 @@ func GetStatement(ctx *gin.Context) {
 			}
 		}
 
-		if matchedTags[0] != translate.SourceLanguage {
-			if err := s.Translate(matchedTags[0]); err != nil {
+		if matchedTag != translate.SourceLanguage {
+			if err := s.Translate(matchedTag); err != nil {
 				_ = g.C.Error(err)
 
 				// might be just cache error
