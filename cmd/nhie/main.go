@@ -38,9 +38,10 @@ func init() {
 	// initialize db connection
 	database.Init(connString)
 
-	// TODO: handle error
 	// initialize translate
-	_ = translate.Init()
+	if err := translate.Init(); err != nil {
+		panic("failed to initialize translations: " + err.Error())
+	}
 
 	// initialize cache
 	cache.Init()

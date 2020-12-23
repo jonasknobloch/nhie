@@ -39,8 +39,7 @@ func Init() error {
 	viper.SetDefault("translate_model", "general/nmt")
 
 	if !viper.IsSet("translate_project") {
-		// TODO: handle gracefully
-		panic("gc project not set")
+		return errors.New("gc project not set")
 	}
 
 	C = &TranslationClient{
