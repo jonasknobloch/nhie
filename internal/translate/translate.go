@@ -22,7 +22,9 @@ type TranslationClient struct {
 }
 
 var C *TranslationClient
+var SourceLanguage = language.AmericanEnglish
 var m = language.NewMatcher([]language.Tag{
+	SourceLanguage,
 	language.German,
 	language.Spanish,
 })
@@ -45,7 +47,7 @@ func Init() error {
 	C = &TranslationClient{
 		c:          c,
 		ctx:        ctx,
-		sourceLang: language.AmericanEnglish,
+		sourceLang: SourceLanguage,
 		project:    viper.GetString("translate_project"),
 		location:   viper.GetString("translate_location"),
 		model:      viper.GetString("translate_model"),

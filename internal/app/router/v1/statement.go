@@ -92,14 +92,16 @@ func GetStatement(ctx *gin.Context) {
 			}
 		}
 
-		if err := s.Translate(matchedTags[0]); err != nil {
-			_ = g.C.Error(err)
+		if matchedTags[0] != translate.SourceLanguage {
+			if err := s.Translate(matchedTags[0]); err != nil {
+				_ = g.C.Error(err)
 
-			// might be just cache error
-			var e *cache.Error
-			if !errors.As(err, &e) {
-				g.ErrorResponse(problem.Default(http.StatusInternalServerError))
-				return
+				// might be just cache error
+				var e *cache.Error
+				if !errors.As(err, &e) {
+					g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+					return
+				}
 			}
 		}
 	}
