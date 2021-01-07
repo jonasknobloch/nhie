@@ -3,6 +3,7 @@ package statement
 import (
 	"github.com/google/uuid"
 	"github.com/nhie-io/api/internal/category"
+	"gorm.io/gorm"
 	"testing"
 	"time"
 )
@@ -25,7 +26,7 @@ func TestStatement_Validate(t *testing.T) {
 			Category:  category.Offensive,
 			CreatedAt: time.Time{},
 			UpdatedAt: time.Time{},
-			DeletedAt: nil,
+			DeletedAt: gorm.DeletedAt{},
 		}
 
 		if err := statement.Validate(); (err == nil) != testCase.shouldPass {

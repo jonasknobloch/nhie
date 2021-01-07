@@ -17,7 +17,7 @@ type (
 		Category  category.Category `gorm:"type:category;not null" json:"category"`
 		CreatedAt time.Time         `json:"-"`
 		UpdatedAt time.Time         `json:"-"`
-		DeletedAt *time.Time        `sql:"index" json:"-"`
+		DeletedAt gorm.DeletedAt    `gorm:"index" json:"-"`
 	}
 )
 
