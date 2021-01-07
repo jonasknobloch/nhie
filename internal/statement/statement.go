@@ -2,11 +2,11 @@ package statement
 
 import (
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/database"
 	"github.com/nhie-io/api/internal/translate"
 	"golang.org/x/text/language"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -21,8 +21,9 @@ type (
 	}
 )
 
-func (*Statement) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("id", uuid.New())
+func (s *Statement) BeforeCreate(_ *gorm.DB) error {
+	s.ID = uuid.New()
+	return nil
 }
 
 func (s *Statement) Save() error {

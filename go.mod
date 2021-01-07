@@ -11,14 +11,15 @@ require (
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/google/uuid v1.1.1
-	github.com/jinzhu/gorm v1.9.16
-	github.com/lib/pq v1.2.0
+	github.com/lib/pq v1.3.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.7.0 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/spf13/viper v1.4.0
 	github.com/zsais/go-gin-prometheus v0.1.0
-	golang.org/x/text v0.3.2
+	golang.org/x/text v0.3.3
 	google.golang.org/genproto v0.0.0-20200331122359-1ee6d9798940
+	gorm.io/driver/postgres v1.0.6
+	gorm.io/gorm v1.20.9
 )

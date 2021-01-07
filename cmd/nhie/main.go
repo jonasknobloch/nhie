@@ -11,8 +11,6 @@ import (
 )
 
 func main() {
-	defer database.C.Close()
-
 	router.Init()
 }
 
@@ -40,5 +38,5 @@ func init() {
 	database.C.Exec("create type category as enum ('harmless', 'delicate', 'offensive')")
 
 	// migrate model
-	database.C.AutoMigrate(&statement.Statement{})
+	_ = database.C.AutoMigrate(&statement.Statement{})
 }

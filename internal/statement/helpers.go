@@ -2,9 +2,9 @@ package statement
 
 import (
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/database"
+	"gorm.io/gorm"
 )
 
 func GetByID(ID uuid.UUID) (*Statement, error) {

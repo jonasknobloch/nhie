@@ -2,11 +2,14 @@ package statement
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/database"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"os"
 	"reflect"
 	"regexp"
@@ -44,7 +47,9 @@ func init() {
 		panic(err)
 	}
 
-	connection, err := gorm.Open("postgres", db)
+	connection, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
 
 	if err != nil {
 		panic(err)
@@ -53,7 +58,7 @@ func init() {
 	database.C = connection
 
 	if _, ok := os.LookupEnv("LOG_MODE"); ok {
-		database.C.LogMode(ok)
+		database.C.Logger.LogMode(logger.Info)
 	}
 }
 
@@ -99,7 +104,7 @@ func TestGetByIDReturnsErrorIfStatementNotFound(t *testing.T) {
 
 	_, err := GetByID(uuid.New())
 
-	if !gorm.IsRecordNotFoundError(err) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		t.Fatalf("Unexpected error. %+v", err)
 	}
 }
@@ -138,7 +143,7 @@ func TestGetRandomByCategoryReturnsErrorIfStatementNotFound(t *testing.T) {
 
 	_, p, err := GetRandomByCategory(category.Offensive)
 
-	if !gorm.IsRecordNotFoundError(err) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		t.Fatalf("Unexpected error. %+v", err)
 	}
 
