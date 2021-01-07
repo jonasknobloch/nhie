@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 	"github.com/nhie-io/api/internal/app"
 	"github.com/nhie-io/api/internal/cache"
@@ -14,6 +13,7 @@ import (
 	"github.com/nhie-io/api/internal/translate"
 	"github.com/nhie-io/api/pkg/problem"
 	"github.com/nhie-io/api/pkg/unique"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -62,7 +62,7 @@ func GetStatement(ctx *gin.Context) {
 	}
 
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			g.ErrorResponse(problem.NoSuchStatement())
 			return
 		}
@@ -193,7 +193,7 @@ func DeleteStatement(ctx *gin.Context) {
 	s, err := statement.GetByID(id)
 
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			g.ErrorResponse(problem.NoSuchStatement())
 			return
 		}

@@ -2,9 +2,9 @@ package database
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/spf13/viper"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var C *gorm.DB
@@ -24,7 +24,7 @@ func Init() error {
 		viper.GetString("db_pass"),
 	)
 
-	if client, err := gorm.Open("postgres", connection); err != nil {
+	if client, err := gorm.Open(postgres.Open(connection), &gorm.Config{}); err != nil {
 		return err
 	} else {
 		C = client
