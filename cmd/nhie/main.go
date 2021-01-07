@@ -38,5 +38,7 @@ func init() {
 	database.C.Exec("create type category as enum ('harmless', 'delicate', 'offensive')")
 
 	// migrate model
-	_ = database.C.AutoMigrate(&statement.Statement{})
+	if err := database.C.AutoMigrate(&statement.Statement{}); err != nil {
+		panic("failed to auto migrate models: " + err.Error())
+	}
 }
