@@ -32,7 +32,7 @@ var expected = &Statement{
 	Category:  category.Offensive,
 	CreatedAt: time.Now(),
 	UpdatedAt: time.Now(),
-	DeletedAt: nil,
+	DeletedAt: gorm.DeletedAt{},
 }
 
 var mock sqlmock.Sqlmock
