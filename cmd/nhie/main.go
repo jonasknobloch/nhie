@@ -11,6 +11,10 @@ import (
 )
 
 func main() {
+	if db, err := database.C.DB(); err == nil {
+		defer db.Close()
+	}
+
 	router.Init()
 }
 
