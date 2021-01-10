@@ -26,7 +26,7 @@ func GetRandomByCategory(category category.Category) (*Statement, int64, error) 
 			return err
 		}
 
-		if err := tx.Where(&Statement{Category: category}).Order("random()").First(&statement).Error; err != nil {
+		if err := tx.Where(&Statement{Category: category}).Order("random()").Take(&statement).Error; err != nil {
 			return err
 		}
 
