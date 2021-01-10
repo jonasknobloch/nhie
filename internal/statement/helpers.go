@@ -5,6 +5,7 @@ import (
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/database"
 	"gorm.io/gorm"
+	"math/rand"
 )
 
 func GetByID(ID uuid.UUID) (*Statement, error) {
@@ -26,7 +27,7 @@ func GetRandomByCategory(category category.Category) (*Statement, int64, error) 
 			return err
 		}
 
-		if err := tx.Where(&Statement{Category: category}).Order("random()").Take(&statement).Error; err != nil {
+		if err := tx.Where(&Statement{Category: category}).Offset(rand.Intn(int(poolSize))).Take(&statement).Error; err != nil {
 			return err
 		}
 

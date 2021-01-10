@@ -64,7 +64,7 @@ func init() {
 
 func mockGetRandomByCategory(rows []*sqlmock.Rows) {
 	count := `SELECT count(1) FROM "statements" WHERE "statements"."category" = $1 AND "statements"."deleted_at" IS NULL`
-	query := `SELECT * FROM "statements" WHERE "statements"."category" = $1 AND "statements"."deleted_at" IS NULL ORDER BY random() LIMIT 1`
+	query := `SELECT * FROM "statements" WHERE "statements"."category" = $1 AND "statements"."deleted_at" IS NULL LIMIT 1`
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(regexp.QuoteMeta(count)).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(len(rows)))
