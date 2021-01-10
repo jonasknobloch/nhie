@@ -104,6 +104,10 @@ func TestGetByIDReturnsErrorIfStatementNotFound(t *testing.T) {
 
 	_, err := GetByID(uuid.New())
 
+	if err == nil {
+		t.Fatalf("Expected error, got %v instead.", err)
+	}
+
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		t.Fatalf("Unexpected error. %+v", err)
 	}
@@ -142,6 +146,10 @@ func TestGetRandomByCategoryReturnsErrorIfStatementNotFound(t *testing.T) {
 	mockGetRandomByCategory([]*sqlmock.Rows{sqlmock.NewRows(row)})
 
 	_, p, err := GetRandomByCategory(category.Offensive)
+
+	if err == nil {
+		t.Fatalf("Expected error, got %v instead.", err)
+	}
 
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		t.Fatalf("Unexpected error. %+v", err)
