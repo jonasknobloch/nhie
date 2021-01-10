@@ -63,8 +63,8 @@ func init() {
 }
 
 func mockGetRandomByCategory(rows []*sqlmock.Rows) {
-	count := `SELECT count(*) FROM "statements"  WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1))`
-	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."category" = $1)) ORDER BY random(),"statements"."id" ASC LIMIT 1`
+	count := `SELECT count(1) FROM "statements" WHERE "statements"."category" = $1 AND "statements"."deleted_at" IS NULL`
+	query := `SELECT * FROM "statements" WHERE "statements"."category" = $1 AND "statements"."deleted_at" IS NULL ORDER BY random(),"statements"."id" LIMIT 1`
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(regexp.QuoteMeta(count)).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(len(rows)))
@@ -73,7 +73,7 @@ func mockGetRandomByCategory(rows []*sqlmock.Rows) {
 }
 
 func TestGetByID(t *testing.T) {
-	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."id" = $1))`
+	query := `SELECT * FROM "statements" WHERE "statements"."id" = $1 AND "statements"."deleted_at" IS NULL LIMIT 1`
 
 	mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(expected.ID).WillReturnRows(
 		sqlmock.NewRows(row).AddRow(
@@ -98,7 +98,7 @@ func TestGetByID(t *testing.T) {
 }
 
 func TestGetByIDReturnsErrorIfStatementNotFound(t *testing.T) {
-	query := `SELECT * FROM "statements" WHERE "statements"."deleted_at" IS NULL AND (("statements"."id" = $1))`
+	query := `SELECT * FROM "statements" WHERE "statements"."id" = $1 AND "statements"."deleted_at" IS NULL LIMIT 1`
 
 	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(sqlmock.NewRows(row))
 
