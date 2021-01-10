@@ -10,7 +10,7 @@ import (
 func GetByID(ID uuid.UUID) (*Statement, error) {
 	var statement Statement
 
-	if err := database.C.Where(&Statement{ID: ID}).Find(&statement).Error; err != nil {
+	if err := database.C.Where(&Statement{ID: ID}).Take(&statement).Error; err != nil {
 		return nil, err
 	}
 
