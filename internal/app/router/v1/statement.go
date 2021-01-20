@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/lib/pq"
+	"github.com/jackc/pgconn"
 	"github.com/nhie-io/api/internal/app"
 	"github.com/nhie-io/api/internal/cache"
 	"github.com/nhie-io/api/internal/category"
@@ -37,7 +37,7 @@ func AddStatement(ctx *gin.Context) {
 		_ = g.C.Error(err)
 
 		// catch unique_violation with error code 23505
-		if e, ok := err.(*pq.Error); ok && e.Code == "23505" {
+		if e, ok := err.(*pgconn.PgError); ok && e.Code == "23505" {
 			g.ErrorResponse(problem.StatementAlreadyExists())
 			return
 		}
