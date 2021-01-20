@@ -6,8 +6,8 @@ import (
 	"regexp"
 )
 
-func (s Statement) Validate() error {
-	return validation.Reformat(ov.ValidateStruct(&s,
+func (s *Statement) Validate() error {
+	return validation.Reformat(ov.ValidateStruct(s,
 		ov.Field(
 			&s.Statement,
 			ov.Required,
