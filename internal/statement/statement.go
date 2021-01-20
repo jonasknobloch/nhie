@@ -31,12 +31,12 @@ func (s *Statement) Save() error {
 		translate.ClearCache(s.ID)
 	}
 
-	return database.C.Save(&s).Error
+	return database.C.Save(s).Error
 }
 
 func (s *Statement) Delete() error {
 	translate.ClearCache(s.ID)
-	return database.C.Delete(&s).Error
+	return database.C.Delete(s).Error
 }
 
 func (s *Statement) Translate(tag language.Tag) error {
