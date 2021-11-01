@@ -2,7 +2,8 @@ package v1
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
 	"github.com/nhie-io/api/internal/app"
@@ -17,176 +18,45 @@ import (
 	"net/http"
 )
 
-func AddStatement(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
+func init() {
+	render.Respond = app.Responder
+}
 
+func AddStatement(w http.ResponseWriter, r *http.Request) {
 	var s statement.Statement
 
-	if err := ctx.ShouldBind(&s); err != nil {
-		g.ErrorResponse(problem.Default(http.StatusBadRequest))
+	if err := render.Bind(r, &s); err != nil {
+		Render(w, r, problem.Default(http.StatusBadRequest))
 		return
 	}
 
 	if err := s.Validate(); err != nil {
-		g.ErrorResponse(problem.ValidationError(err))
+		Render(w, r, problem.ValidationError(err))
 		return
 	}
 
 	if err := s.Save(); err != nil {
 
-		_ = g.C.Error(err)
-
 		// catch unique_violation with error code 23505
 		if e, ok := err.(*pgconn.PgError); ok && e.Code == "23505" {
-			g.ErrorResponse(problem.StatementAlreadyExists())
+			Render(w, r, problem.StatementAlreadyExists())
 			return
 		}
 
-		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+		Render(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
-	g.Response(http.StatusCreated, s)
+	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, &s)
 }
 
-func GetStatement(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
-
-	var s *statement.Statement
-	var err error
-
-	if g.C.Params.ByName("id") == "random" {
-		s, err = getRandomStatement(g)
-	} else {
-		s, err = getStatementByID(g)
-	}
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			g.ErrorResponse(problem.NoSuchStatement())
-			return
-		}
-
-		_ = g.C.Error(err)
-		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
-		return
-	}
-
-	// error already handled
-	if s == nil {
-		return
-	}
-
-	if l := g.C.Query("language"); l != "" {
-		matchedTag, err := translate.MatchTag(l)
-
-		if err != nil {
-			var e *translate.MatchingError
-			if errors.As(err, &e) {
-				g.ErrorResponse(translate.NewMatchingErrorProblem(e))
-				return
-			} else {
-				_ = g.C.Error(err)
-				g.ErrorResponse(problem.Default(http.StatusInternalServerError))
-				return
-			}
-		}
-
-		if matchedTag != translate.SourceLanguage {
-			if err := s.Translate(matchedTag); err != nil {
-				_ = g.C.Error(err)
-
-				// might be just cache error
-				var e *cache.Error
-				if !errors.As(err, &e) {
-					g.ErrorResponse(problem.Default(http.StatusInternalServerError))
-					return
-				}
-			}
-		}
-	}
-
-	// a redirect might make sense but the resulting round trip is just not worth it
-	g.Response(http.StatusOK, s)
-}
-
-func getStatementByID(g app.Gin) (*statement.Statement, error) {
+func GetStatementByID(w http.ResponseWriter, r *http.Request) {
 	// g.C.Params.ByName("id") returns an empty string if no matching key is found
-	id, err := uuid.Parse(g.C.Params.ByName("id"))
+	id, err := uuid.Parse(chi.URLParam(r, "statementID"))
 
 	if err != nil {
-		g.ErrorResponse(problem.Default(http.StatusBadRequest))
-		return nil, nil
-	}
-
-	return statement.GetByID(id)
-}
-
-func getRandomStatement(g app.Gin) (*statement.Statement, error) {
-	var categories []category.Category
-
-	for _, v := range unique.Strings(append(g.C.QueryArray("category"), g.C.QueryArray("category[]")...)) {
-		c := category.Category(v)
-
-		if err := c.Validate(); err != nil {
-			g.ErrorResponse(problem.ValidationError(err))
-			return nil, nil
-		}
-
-		categories = append(categories, c)
-	}
-
-	s, p, err := statement.GetRandomByCategory(category.GetRandom(categories...))
-
-	if g.C.Query("game_id") == "" || err != nil {
-		return s, err
-	}
-
-	var gameID uuid.UUID
-	gameID, err = uuid.Parse(g.C.Query("game_id"))
-
-	if err != nil {
-		g.ErrorResponse(problem.Default(http.StatusBadRequest))
-		return nil, nil
-	}
-
-	var e bool
-	maxTries := history.MaxTries
-
-	for try := 0; try < maxTries; try++ {
-
-		if e, err = history.Exists(gameID, s); err != nil {
-			break
-		}
-
-		if err = history.Add(gameID, s); err != nil {
-			break
-		}
-
-		if !e {
-			break
-		}
-
-		history.ReportDuplicate(try+1, maxTries, p)
-
-		s, p, err = statement.GetRandomByCategory(category.GetRandom(categories...))
-
-		if err != nil {
-			break
-		}
-	}
-
-	return s, err
-}
-
-func DeleteStatement(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
-
-	// ctx.Params.ByName("id") returns an empty string if no matching key is found
-	id, err := uuid.Parse(ctx.Params.ByName("id"))
-
-	if err != nil {
-		g.ErrorResponse(problem.Default(http.StatusBadRequest))
+		Render(w, r, problem.Default(http.StatusBadRequest))
 		return
 	}
 
@@ -194,27 +64,161 @@ func DeleteStatement(ctx *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			g.ErrorResponse(problem.NoSuchStatement())
+			Render(w, r, problem.NoSuchStatement())
+		}
+
+		Render(w, r, problem.Default(http.StatusInternalServerError))
+		return
+	}
+
+	if l := r.URL.Query().Get("language"); l != "" {
+		if p := TranslateStatement(s, l); p != nil {
+			Render(w, r, p)
+			return
+		}
+	}
+
+	render.JSON(w, r, s)
+}
+
+func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
+	var categories []category.Category
+
+	q := r.URL.Query()
+	c := make([]string, 0)
+
+	if v, ok := q["category"]; ok {
+		c = append(c, v...)
+	}
+
+	if v, ok := q["category[]"]; ok {
+		c = append(c, v...)
+	}
+
+	for _, v := range unique.Strings(c) {
+		c := category.Category(v)
+
+		if err := c.Validate(); err != nil {
+			Render(w, r, problem.ValidationError(err))
 			return
 		}
 
-		_ = g.C.Error(err)
-		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+		categories = append(categories, c)
+	}
+
+	s, p, err := statement.GetRandomByCategory(category.GetRandom(categories...))
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Render(w, r, problem.NoSuchStatement())
+		}
+
+		Render(w, r, problem.Default(http.StatusInternalServerError))
+		return
+	}
+
+	if r.URL.Query().Get("game_id") != "" {
+		var gameID uuid.UUID
+		gameID, err = uuid.Parse(r.URL.Query().Get("game_id"))
+
+		if err != nil {
+			Render(w, r, problem.Default(http.StatusBadRequest))
+			return
+		}
+
+		var e bool
+		maxTries := history.MaxTries
+
+		for try := 0; try < maxTries; try++ {
+
+			if e, err = history.Exists(gameID, s); err != nil {
+				break
+			}
+
+			if err = history.Add(gameID, s); err != nil {
+				break
+			}
+
+			if !e {
+				break
+			}
+
+			history.ReportDuplicate(try+1, maxTries, p)
+
+			s, p, err = statement.GetRandomByCategory(category.GetRandom(categories...))
+
+			if err != nil {
+				break
+			}
+		}
+	}
+
+	if l := r.URL.Query().Get("language"); l != "" {
+		if p := TranslateStatement(s, l); p != nil {
+			Render(w, r, p)
+			return
+		}
+	}
+
+	render.JSON(w, r, s)
+}
+
+func TranslateStatement(s *statement.Statement, l string) *problem.Problem {
+	matchedTag, err := translate.MatchTag(l)
+
+	if err != nil {
+		var e *translate.MatchingError
+		if errors.As(err, &e) {
+			return translate.NewMatchingErrorProblem(e)
+		} else {
+			return problem.Default(http.StatusInternalServerError)
+		}
+	}
+
+	if matchedTag != translate.SourceLanguage {
+		if err := s.Translate(matchedTag); err != nil {
+			// might be just cache error
+			var e *cache.Error
+			if !errors.As(err, &e) {
+				return problem.Default(http.StatusInternalServerError)
+			}
+		}
+	}
+
+	return nil
+}
+
+func DeleteStatement(w http.ResponseWriter, r *http.Request) {
+	// ctx.Params.ByName("id") returns an empty string if no matching key is found
+	id, err := uuid.Parse(chi.URLParam(r, "statementID"))
+
+	if err != nil {
+		Render(w, r, problem.Default(http.StatusBadRequest))
+		return
+	}
+
+	s, err := statement.GetByID(id)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			Render(w, r, problem.NoSuchStatement())
+			return
+		}
+
+		Render(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
 	if err := s.Delete(); err != nil {
-		_ = g.C.Error(err)
-		g.ErrorResponse(problem.Default(http.StatusInternalServerError))
+		Render(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
-	g.Response(http.StatusNoContent)
+	render.NoContent(w, r)
 }
 
-func EditStatement(ctx *gin.Context) {
-	g := app.Gin{C: ctx}
-
+func EditStatement(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement
-	g.ErrorResponse(problem.Default(http.StatusNotImplemented))
+
+	Render(w, r, problem.Default(http.StatusNotImplemented))
 }

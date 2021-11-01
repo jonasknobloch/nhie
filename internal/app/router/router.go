@@ -1,34 +1,32 @@
 package router
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/nhie-io/api/internal/app/auth"
-	"github.com/nhie-io/api/internal/app/middleware/prometheus"
 	v1 "github.com/nhie-io/api/internal/app/router/v1"
+	"net/http"
 )
 
-func Init() {
-	router := gin.Default()
+func Init() error {
+	router := chi.NewRouter()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://nhie.io"}
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://nhie.io"},
+	}))
 
-	router.Use(cors.New(config))
+	router.Route("/v1/statements", func(r chi.Router) {
+		r.Get("/random", v1.GetRandomStatement)
+		r.Get("/{statementID}", v1.GetStatementByID)
 
-	// initialize prometheus metrics
-	prometheus.UseWithAuth(router, auth.Accounts([]string{"admin", "metrics"}))
+		r.Route("/", func(r chi.Router) {
+			r.Use(middleware.BasicAuth("", auth.Accounts([]string{"admin"})))
+			r.Post("/", v1.AddStatement)
+			r.Put("/{statementID}", v1.EditStatement)
+			r.Delete("/{statementID}", v1.DeleteStatement)
+		})
+	})
 
-	router.GET("/v1/statements/:id", v1.GetStatement)
-
-	authorized := router.Group("/v1", gin.BasicAuth(auth.Accounts([]string{"admin"})))
-	{
-		authorized.POST("/statements", v1.AddStatement)
-		authorized.PUT("/statements/:id", v1.EditStatement)
-		authorized.DELETE("/statements/:id", v1.DeleteStatement)
-	}
-
-	if err := router.Run(); err != nil {
-		panic("unable initialize router")
-	}
+	return http.ListenAndServe(":8080", router)
 }

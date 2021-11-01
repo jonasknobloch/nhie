@@ -1,13 +1,12 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
-func Accounts(users []string) gin.Accounts {
+func Accounts(users []string) map[string]string {
 
-	accounts := make(gin.Accounts)
+	accounts := make(map[string]string)
 
 	for _, u := range users {
 		user := viper.GetString(u + "_user")

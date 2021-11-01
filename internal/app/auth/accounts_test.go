@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"os"
 	"reflect"
@@ -17,17 +16,17 @@ func TestAccounts(t *testing.T) {
 
 	cases := []struct {
 		input    []string
-		expected gin.Accounts
+		expected map[string]string
 	}{
 		{
 			[]string{"test"},
-			gin.Accounts{
+			map[string]string{
 				"foo": "bar",
 			},
 		},
 		{
 			[]string{"baz"},
-			gin.Accounts{},
+			map[string]string{},
 		},
 	}
 

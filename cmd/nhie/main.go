@@ -15,7 +15,9 @@ func main() {
 		defer db.Close()
 	}
 
-	router.Init()
+	if err := router.Init(); err != nil {
+		panic("failed to initialize router: " + err.Error())
+	}
 }
 
 func init() {
