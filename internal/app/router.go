@@ -1,11 +1,9 @@
-package router
+package app
 
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/nhie-io/api/internal/app/auth"
-	v1 "github.com/nhie-io/api/internal/app/router/v1"
 	"net/http"
 )
 
@@ -17,14 +15,14 @@ func Init() error {
 	}))
 
 	router.Route("/v1/statements", func(r chi.Router) {
-		r.Get("/random", v1.GetRandomStatement)
-		r.Get("/{statementID}", v1.GetStatementByID)
+		r.Get("/random", getRandomStatement)
+		r.Get("/{statementID}", getStatementByID)
 
 		r.Route("/", func(r chi.Router) {
-			r.Use(middleware.BasicAuth("", auth.Accounts([]string{"admin"})))
-			r.Post("/", v1.AddStatement)
-			r.Put("/{statementID}", v1.EditStatement)
-			r.Delete("/{statementID}", v1.DeleteStatement)
+			r.Use(middleware.BasicAuth("", accounts([]string{"admin"})))
+			r.Post("/", addStatement)
+			r.Put("/{statementID}", editStatement)
+			r.Delete("/{statementID}", deleteStatement)
 		})
 	})
 

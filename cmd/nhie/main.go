@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nhie-io/api/internal/app/router"
+	"github.com/nhie-io/api/internal/app"
 	"github.com/nhie-io/api/internal/cache"
 	"github.com/nhie-io/api/internal/database"
 	"github.com/nhie-io/api/internal/history"
@@ -15,8 +15,8 @@ func main() {
 		defer db.Close()
 	}
 
-	if err := router.Init(); err != nil {
-		panic("failed to initialize router: " + err.Error())
+	if err := app.Init(); err != nil {
+		panic("failed to initialize application: " + err.Error())
 	}
 }
 

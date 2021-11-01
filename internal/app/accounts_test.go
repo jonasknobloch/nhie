@@ -1,4 +1,4 @@
-package auth
+package app
 
 import (
 	"github.com/spf13/viper"
@@ -31,7 +31,7 @@ func TestAccounts(t *testing.T) {
 	}
 
 	for k, c := range cases {
-		result := Accounts(c.input)
+		result := accounts(c.input)
 		if !reflect.DeepEqual(result, c.expected) {
 			t.Fatalf("%d: Unexpected output: %+v", k, result)
 		}

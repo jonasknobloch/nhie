@@ -1,10 +1,10 @@
-package auth
+package app
 
 import (
 	"github.com/spf13/viper"
 )
 
-func Accounts(users []string) map[string]string {
+func accounts(users []string) map[string]string {
 
 	accounts := make(map[string]string)
 

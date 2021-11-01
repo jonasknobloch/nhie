@@ -1,4 +1,4 @@
-package v1
+package app
 
 import (
 	"errors"
@@ -6,7 +6,6 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
-	"github.com/nhie-io/api/internal/app"
 	"github.com/nhie-io/api/internal/cache"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/history"
@@ -19,19 +18,19 @@ import (
 )
 
 func init() {
-	render.Respond = app.Responder
+	render.Respond = Responder
 }
 
-func AddStatement(w http.ResponseWriter, r *http.Request) {
+func addStatement(w http.ResponseWriter, r *http.Request) {
 	var s statement.Statement
 
 	if err := render.Bind(r, &s); err != nil {
-		Render(w, r, problem.Default(http.StatusBadRequest))
+		renderJSON(w, r, problem.Default(http.StatusBadRequest))
 		return
 	}
 
 	if err := s.Validate(); err != nil {
-		Render(w, r, problem.ValidationError(err))
+		renderJSON(w, r, problem.ValidationError(err))
 		return
 	}
 
@@ -39,11 +38,11 @@ func AddStatement(w http.ResponseWriter, r *http.Request) {
 
 		// catch unique_violation with error code 23505
 		if e, ok := err.(*pgconn.PgError); ok && e.Code == "23505" {
-			Render(w, r, problem.StatementAlreadyExists())
+			renderJSON(w, r, problem.StatementAlreadyExists())
 			return
 		}
 
-		Render(w, r, problem.Default(http.StatusInternalServerError))
+		renderJSON(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -51,12 +50,12 @@ func AddStatement(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, &s)
 }
 
-func GetStatementByID(w http.ResponseWriter, r *http.Request) {
+func getStatementByID(w http.ResponseWriter, r *http.Request) {
 	// g.C.Params.ByName("id") returns an empty string if no matching key is found
 	id, err := uuid.Parse(chi.URLParam(r, "statementID"))
 
 	if err != nil {
-		Render(w, r, problem.Default(http.StatusBadRequest))
+		renderJSON(w, r, problem.Default(http.StatusBadRequest))
 		return
 	}
 
@@ -64,16 +63,16 @@ func GetStatementByID(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			Render(w, r, problem.NoSuchStatement())
+			renderJSON(w, r, problem.NoSuchStatement())
 		}
 
-		Render(w, r, problem.Default(http.StatusInternalServerError))
+		renderJSON(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
 	if l := r.URL.Query().Get("language"); l != "" {
-		if p := TranslateStatement(s, l); p != nil {
-			Render(w, r, p)
+		if p := translateStatement(s, l); p != nil {
+			renderJSON(w, r, p)
 			return
 		}
 	}
@@ -81,7 +80,7 @@ func GetStatementByID(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
+func getRandomStatement(w http.ResponseWriter, r *http.Request) {
 	var categories []category.Category
 
 	q := r.URL.Query()
@@ -99,7 +98,7 @@ func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
 		c := category.Category(v)
 
 		if err := c.Validate(); err != nil {
-			Render(w, r, problem.ValidationError(err))
+			renderJSON(w, r, problem.ValidationError(err))
 			return
 		}
 
@@ -110,10 +109,10 @@ func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			Render(w, r, problem.NoSuchStatement())
+			renderJSON(w, r, problem.NoSuchStatement())
 		}
 
-		Render(w, r, problem.Default(http.StatusInternalServerError))
+		renderJSON(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
@@ -122,7 +121,7 @@ func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
 		gameID, err = uuid.Parse(r.URL.Query().Get("game_id"))
 
 		if err != nil {
-			Render(w, r, problem.Default(http.StatusBadRequest))
+			renderJSON(w, r, problem.Default(http.StatusBadRequest))
 			return
 		}
 
@@ -154,8 +153,8 @@ func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if l := r.URL.Query().Get("language"); l != "" {
-		if p := TranslateStatement(s, l); p != nil {
-			Render(w, r, p)
+		if p := translateStatement(s, l); p != nil {
+			renderJSON(w, r, p)
 			return
 		}
 	}
@@ -163,7 +162,7 @@ func GetRandomStatement(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func TranslateStatement(s *statement.Statement, l string) *problem.Problem {
+func translateStatement(s *statement.Statement, l string) *problem.Problem {
 	matchedTag, err := translate.MatchTag(l)
 
 	if err != nil {
@@ -188,12 +187,12 @@ func TranslateStatement(s *statement.Statement, l string) *problem.Problem {
 	return nil
 }
 
-func DeleteStatement(w http.ResponseWriter, r *http.Request) {
+func deleteStatement(w http.ResponseWriter, r *http.Request) {
 	// ctx.Params.ByName("id") returns an empty string if no matching key is found
 	id, err := uuid.Parse(chi.URLParam(r, "statementID"))
 
 	if err != nil {
-		Render(w, r, problem.Default(http.StatusBadRequest))
+		renderJSON(w, r, problem.Default(http.StatusBadRequest))
 		return
 	}
 
@@ -201,24 +200,24 @@ func DeleteStatement(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			Render(w, r, problem.NoSuchStatement())
+			renderJSON(w, r, problem.NoSuchStatement())
 			return
 		}
 
-		Render(w, r, problem.Default(http.StatusInternalServerError))
+		renderJSON(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
 	if err := s.Delete(); err != nil {
-		Render(w, r, problem.Default(http.StatusInternalServerError))
+		renderJSON(w, r, problem.Default(http.StatusInternalServerError))
 		return
 	}
 
 	render.NoContent(w, r)
 }
 
-func EditStatement(w http.ResponseWriter, r *http.Request) {
+func editStatement(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement
 
-	Render(w, r, problem.Default(http.StatusNotImplemented))
+	renderJSON(w, r, problem.Default(http.StatusNotImplemented))
 }
