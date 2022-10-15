@@ -1,24 +1,31 @@
 module github.com/nhie-io/api
 
-go 1.14
+go 1.18
 
 require (
-	cloud.google.com/go v0.56.0
-	github.com/DATA-DOG/go-sqlmock v1.3.3
-	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
+	github.com/bounoable/deepl v0.5.1
 	github.com/go-chi/chi/v5 v5.0.2
-	github.com/go-chi/cors v1.2.0
+	github.com/go-chi/hostrouter v0.2.0
 	github.com/go-chi/render v1.0.1
-	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
-	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/google/uuid v1.1.1
-	github.com/jackc/pgconn v1.8.0
-	github.com/onsi/ginkgo v1.7.0 // indirect
-	github.com/onsi/gomega v1.4.3 // indirect
-	github.com/spf13/viper v1.4.0
+	github.com/rakyll/statik v0.1.7
 	golang.org/x/text v0.3.3
-	google.golang.org/genproto v0.0.0-20200331122359-1ee6d9798940
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gorm.io/driver/postgres v1.0.6
 	gorm.io/gorm v1.20.9
+)
+
+require (
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.8.0 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.0.6 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.6.2 // indirect
+	github.com/jackc/pgx/v4 v4.10.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.1 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/sys v0.0.0-20220624220833-87e55d714810 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )

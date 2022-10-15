@@ -11,32 +11,28 @@ import (
 func GetByID(ID uuid.UUID) (*Statement, error) {
 	var statement Statement
 
-	if err := database.C.Where(&Statement{ID: ID}).Take(&statement).Error; err != nil {
+	if err := database.C.Raw(`SELECT id, statement, category FROM game WHERE id = ?;`, ID).Scan(&statement).Error; err != nil {
 		return nil, err
 	}
 
 	return &statement, nil
 }
 
-func GetRandomByCategory(category category.Category) (*Statement, int64, error) {
+func GetRandomByCategory(category category.Category) (*Statement, error) {
+	var pool int
 	var statement Statement
-	var poolSize int64
 
 	err := database.C.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Model(&Statement{}).Where(&Statement{Category: category}).Count(&poolSize).Error; err != nil {
+		if err := database.C.Raw(`SELECT COUNT(*) FROM game WHERE category = ?;`, category).Scan(&pool).Error; err != nil {
 			return err
 		}
 
-		if err := tx.Where(&Statement{Category: category}).Offset(rand.Intn(int(poolSize))).Take(&statement).Error; err != nil {
+		if err := database.C.Raw(`SELECT id, statement, category FROM game OFFSET ? LIMIT 1;`, rand.Intn(pool+1)-1).Scan(&statement).Error; err != nil {
 			return err
 		}
 
 		return nil
 	})
 
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return &statement, poolSize, nil
+	return &statement, err
 }

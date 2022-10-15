@@ -26,10 +26,23 @@ func (c *Category) Scan(src interface{}) error {
 	}
 }
 
-func (c Category) Value() (driver.Value, error) {
+func (c *Category) Value() (driver.Value, error) {
 	return c.String(), nil
 }
 
-func (c Category) String() string {
-	return string(c)
+func (c *Category) String() string {
+	return string(*c)
+}
+
+func Match(val string) (Category, bool) {
+	switch Category(val) {
+	case Harmless:
+		return Harmless, true
+	case Delicate:
+		return Delicate, true
+	case Offensive:
+		return Offensive, true
+	default:
+		return "", false
+	}
 }

@@ -1,113 +1,87 @@
 package translate
 
 import (
-	translate "cloud.google.com/go/translate/apiv3"
 	"context"
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
-	"github.com/nhie-io/api/internal/cache"
-	"github.com/spf13/viper"
+	"github.com/bounoable/deepl"
+	"github.com/nhie-io/api/internal/database"
+	"github.com/nhie-io/api/internal/statement"
 	"golang.org/x/text/language"
-	translatepb "google.golang.org/genproto/googleapis/cloud/translate/v3"
+	"time"
 )
 
-type TranslationClient struct {
-	c          *translate.TranslationClient
-	ctx        context.Context
-	sourceLang language.Tag
-	project    string
-	location   string
-	model      string
+var (
+	ErrInvalidLanguageTag  = errors.New("invalid language tag")
+	ErrUnsupportedLanguage = errors.New("unsupported language")
+)
+
+var SourceLanguage = language.AmericanEnglish
+
+var languages = map[language.Tag]deepl.Language{
+	language.AmericanEnglish: deepl.EnglishAmerican,
+	language.German:          deepl.German,
 }
 
-var C *TranslationClient
-var SourceLanguage = language.AmericanEnglish
-var m = language.NewMatcher([]language.Tag{
-	SourceLanguage,
-	language.German,
-	language.Spanish,
-})
+var client *deepl.Client
 
-func Init() error {
-	ctx := context.Background()
-	c, err := translate.NewTranslationClient(ctx)
+func Init(authKey, baseURL string) {
+	client = deepl.New(authKey, deepl.BaseURL(baseURL))
+}
+
+func MatchTag(input string) (language.Tag, error) {
+	tag, err := language.Parse(input)
+
+	if err != nil {
+		return language.Und, ErrInvalidLanguageTag
+	}
+
+	if _, ok := languages[tag]; !ok {
+		return language.Und, ErrUnsupportedLanguage
+	}
+
+	return tag, nil
+}
+
+func TranslateStatement(s *statement.Statement, t language.Tag) error {
+	l, ok := languages[t]
+
+	if !ok {
+		return ErrUnsupportedLanguage
+	}
+
+	translation, _, err := client.Translate(context.TODO(), s.Statement, l)
 
 	if err != nil {
 		return err
 	}
 
-	viper.SetDefault("translate_location", "global")
-	viper.SetDefault("translate_model", "general/nmt")
+	now := time.Now()
 
-	if !viper.IsSet("translate_project") {
-		return errors.New("gc project not set")
-	}
-
-	C = &TranslationClient{
-		c:          c,
-		ctx:        ctx,
-		sourceLang: SourceLanguage,
-		project:    viper.GetString("translate_project"),
-		location:   viper.GetString("translate_location"),
-		model:      viper.GetString("translate_model"),
+	if err := database.C.Exec(`INSERT INTO translations (statement_id, language, translation, created_at, updated_at) VALUES (?, ?, ?, ?, ?);`, s.ID, t.String(), translation, now, now).Error; err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (tc *TranslationClient) Translate(uuid uuid.UUID, s string, tag language.Tag) (string, error) {
-	var ttr *translatepb.TranslateTextResponse
-	var cacheErr error
-	var fetchErr error
+func TranslateMissing(t language.Tag) error {
+	statements := make([]statement.Statement, 0)
 
-	var t string
+	_, ok := languages[t]
 
-	// translation cached
-	if t, cacheErr = retrieveFromCache(uuid, tag, tc.model); cacheErr == nil {
-		return t, nil
+	if !ok {
+		return ErrUnsupportedLanguage
 	}
 
-	ttr, fetchErr = tc.fetchFromApi(s, tag)
-
-	// failed fetch
-	if fetchErr != nil {
-		return "", newError(fetchErr)
+	if err := database.C.Raw(`SELECT id, statement, category FROM statements WHERE NOT EXISTS (SELECT statement_id FROM translations WHERE language = ? AND statements.id = translations.statement_id);`, t.String()).Scan(&statements).Error; err != nil {
+		return err
 	}
 
-	// verify a translation is present
-	if len(ttr.Translations) == 0 {
-		return "", newError(ErrNoTranslationReceived)
+	for _, s := range statements {
+		if err := TranslateStatement(&s, t); err != nil {
+			return err
+		}
 	}
 
-	t = ttr.Translations[0].TranslatedText
-
-	// store if possible
-	if errors.Is(cacheErr, cache.ErrKeyNotFound) {
-		cacheErr = storeInCache(uuid, tag, tc.model, t)
-	}
-
-	// unwrapped cache error might be nil
-	if errors.Unwrap(cacheErr) != nil {
-		return ttr.Translations[0].TranslatedText, newError(cacheErr)
-	}
-
-	return t, nil
-}
-
-func (tc *TranslationClient) fetchFromApi(s string, tag language.Tag) (*translatepb.TranslateTextResponse, error) {
-	req := &translatepb.TranslateTextRequest{
-		Contents:           []string{s},
-		MimeType:           "text/plain",
-		SourceLanguageCode: tc.sourceLang.String(),
-		TargetLanguageCode: tag.String(),
-		Parent:             fmt.Sprintf("projects/%s/locations/%s", tc.project, tc.location),
-		Model:              fmt.Sprintf("projects/%s/locations/%s/models/%s", tc.project, tc.location, tc.model),
-	}
-
-	return tc.c.TranslateText(tc.ctx, req)
-}
-
-func BulkTranslate() {
-	// TODO: implement
+	return nil
 }
