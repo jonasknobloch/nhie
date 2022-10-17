@@ -12,7 +12,9 @@ import (
 const PostgresDSNEnv = "NHIE_POSTGRES_DSN"
 
 func main() {
-	if db, err := database.C.DB(); err == nil {
+	if db, err := database.C.DB(); err != nil {
+		log.Fatal(err)
+	} else {
 		defer db.Close()
 	}
 
