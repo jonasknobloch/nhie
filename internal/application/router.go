@@ -11,7 +11,15 @@ func Init() error {
 
 	hr := hostrouter.New()
 
-	hr.Map("nhie.io", webRouter())
+	hr.Map("nhie.io", func() chi.Router {
+		router := chi.NewRouter()
+
+		router.Mount("/", webRouter())
+		router.Mount("/static", staticRouter())
+
+		return router
+	}())
+
 	hr.Map("api.nhie.io", apiRouter())
 
 	// TODO not working with :8080

@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/database"
@@ -22,7 +23,7 @@ func init() {
 func webRouter() chi.Router {
 	router := chi.NewRouter()
 
-	router.Get("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))).ServeHTTP)
+	router.Use(middleware.Logger)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		c := category.NewSelection()

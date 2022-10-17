@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/nhie-io/api/internal/statement"
 	"github.com/nhie-io/api/internal/translate"
@@ -10,6 +11,8 @@ import (
 
 func apiRouter() chi.Router {
 	router := chi.NewRouter()
+
+	router.Use(middleware.Logger)
 
 	router.Get("/v1/statements/random", func(w http.ResponseWriter, r *http.Request) {
 		c, ok := queryCategories(r)
