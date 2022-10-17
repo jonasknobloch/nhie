@@ -12,6 +12,14 @@ import (
 const PostgresDSNEnv = "NHIE_POSTGRES_DSN"
 
 func main() {
+	fmt.Println("      _    _     ")
+	fmt.Println(" _ _ | |_ (_)___ ")
+	fmt.Println("| ' \\| ' \\| / -_)")
+	fmt.Println("|_||_|_||_|_\\___|")
+	fmt.Println("31 38 31 32 31 35")
+
+	fmt.Print("\n")
+
 	if db, err := database.C.DB(); err != nil {
 		log.Fatal(err)
 	} else {
