@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-func Init() error {
+func Init(webHost, apiHost string) error {
 	r := chi.NewRouter()
 
 	hr := hostrouter.New()
 
-	hr.Map("nhie.io", func() chi.Router {
+	hr.Map(webHost, func() chi.Router {
 		router := chi.NewRouter()
 
 		router.Mount("/", webRouter())
@@ -20,7 +20,7 @@ func Init() error {
 		return router
 	}())
 
-	hr.Map("api.nhie.io", apiRouter())
+	hr.Map(apiHost, apiRouter())
 
 	// TODO not working with :8080
 

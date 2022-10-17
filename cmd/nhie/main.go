@@ -9,6 +9,8 @@ import (
 	"os"
 )
 
+const WebHostEnv = "NHIE_WEB_HOST"
+const APIHostEnv = "NHIE_API_HOST"
 const PostgresDSNEnv = "NHIE_POSTGRES_DSN"
 
 func main() {
@@ -26,7 +28,19 @@ func main() {
 		defer db.Close()
 	}
 
-	if err := application.Init(); err != nil {
+	webHost, ok := os.LookupEnv(WebHostEnv)
+
+	if !ok {
+		log.Fatal(envNotSetError(WebHostEnv))
+	}
+
+	apiHost, ok := os.LookupEnv(APIHostEnv)
+
+	if !ok {
+		log.Fatal(envNotSetError(APIHostEnv))
+	}
+
+	if err := application.Init(webHost, apiHost); err != nil {
 		log.Fatal(err)
 	}
 }
