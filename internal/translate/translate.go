@@ -15,11 +15,11 @@ var (
 	ErrUnsupportedLanguage = errors.New("unsupported language")
 )
 
-var SourceLanguage = language.AmericanEnglish
+var SourceLanguage = language.English
 
 var languages = map[language.Tag]deepl.Language{
-	language.AmericanEnglish: deepl.EnglishAmerican,
-	language.German:          deepl.German,
+	language.English: deepl.EnglishAmerican,
+	language.German:  deepl.German,
 }
 
 var client *deepl.Client
