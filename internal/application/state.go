@@ -33,3 +33,7 @@ func (s state) Categories() categories {
 func (s state) Language() string {
 	return s.language.String()
 }
+
+func (s state) ContentLocation() string {
+	return "/statements/" + s.statement.ID.String()
+}

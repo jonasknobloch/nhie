@@ -1,5 +1,3 @@
-window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
-
 document.addEventListener('DOMContentLoaded', (event) => {
     const form = document.querySelector('#js-form');
     const statementID = document.querySelector('#js-statement-id').getAttribute('value');

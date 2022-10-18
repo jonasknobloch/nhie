@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 	"html/template"
 	"net/http"
-	"net/url"
 )
 
 var templates *template.Template
@@ -38,13 +37,7 @@ func webRouter() chi.Router {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
 
-		u, err := url.Parse("/statements/" + s.ID.String())
-
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-
-		http.Redirect(w, r, u.String(), http.StatusTemporaryRedirect)
+		renderGame(s, w, r)
 	})
 
 	router.Get("/statements/next", func(w http.ResponseWriter, r *http.Request) {
@@ -82,39 +75,17 @@ func webRouter() chi.Router {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
 
-		var redirect string
+		s, err := statement.GetByID(uuid.MustParse(rID))
 
-		{
-			redirectURL := *r.URL
-
-			redirectURL.Path = "/statements/" + rID
-
-			if q := redirectURL.Query(); q.Has("statement_id") {
-				q.Del("statement_id")
-				redirectURL.RawQuery = q.Encode()
-			}
-
-			redirect = redirectURL.RequestURI()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 
-		http.Redirect(w, r, redirect, http.StatusTemporaryRedirect)
+		renderGame(s, w, r)
 	})
 
 	router.Get("/statements/{statementID}", func(w http.ResponseWriter, r *http.Request) {
-		l, ok := queryLanguage(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		c, ok := queryCategories(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
 		sID, err := uuid.Parse(chi.URLParam(r, "statementID"))
 
 		if err != nil {
@@ -129,24 +100,46 @@ func webRouter() chi.Router {
 			return
 		}
 
-		if l != translate.SourceLanguage {
-			err := s.Translate(l)
-
-			if err != nil {
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				return
-			}
-		}
-
-		if err := templates.ExecuteTemplate(w, "index.html", state{
-			statement:  s,
-			categories: c,
-			language:   l,
-		}); err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
+		renderGame(s, w, r)
 	})
 
 	return router
+}
+
+func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) {
+	l, ok := queryLanguage(r)
+
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	c, ok := queryCategories(r)
+
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	if l != translate.SourceLanguage {
+		err := s.Translate(l)
+
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	data := state{
+		statement:  s,
+		categories: c,
+		language:   l,
+	}
+
+	w.Header().Add("Content-Location", data.ContentLocation())
+
+	if err := templates.ExecuteTemplate(w, "index.html", data); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 }
