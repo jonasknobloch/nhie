@@ -35,5 +35,5 @@ func (s state) Language() string {
 }
 
 func (s state) ContentLocation() string {
-	return "/statements/" + s.statement.ID.String()
+	return "/statements/" + s.statement.ID.String() + "?language=" + s.language.String()
 }
