@@ -136,6 +136,7 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 		language:   l,
 	}
 
+	w.Header().Set("Content-Type", "text/html")
 	w.Header().Set("Content-Location", data.ContentLocation())
 
 	if err := templates.ExecuteTemplate(w, "index.html", data); err != nil {
