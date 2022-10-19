@@ -11,6 +11,7 @@ func Init(webHost, apiHost string) error {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Compress(5, "text/html"))
+	r.Use(middleware.Heartbeat("/ping"))
 
 	hr := hostrouter.New()
 
