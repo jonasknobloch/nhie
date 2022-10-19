@@ -136,7 +136,7 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 		language:   l,
 	}
 
-	w.Header().Add("Content-Location", data.ContentLocation())
+	w.Header().Set("Content-Location", data.ContentLocation())
 
 	if err := templates.ExecuteTemplate(w, "index.html", data); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
