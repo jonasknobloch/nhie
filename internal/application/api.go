@@ -48,5 +48,48 @@ func apiRouter() chi.Router {
 		render.JSON(w, r, s)
 	})
 
+	router.Get("/v2/statements/next", func(w http.ResponseWriter, r *http.Request) {
+		c, ok := queryCategories(r)
+
+		if !ok {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		sID, ok := queryStatementID(r)
+
+		var s *statement.Statement
+		var err error
+
+		if !ok {
+			s, err = statement.GetRandomByCategory(c.Random())
+		} else {
+			s, err = statement.GetNextByPreviousIDAndCategory(sID, c.Random())
+		}
+
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		l, ok := queryLanguage(r)
+
+		if !ok {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		if l != translate.SourceLanguage {
+			err := s.Translate(l)
+
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		render.JSON(w, r, s)
+	})
+
 	return router
 }

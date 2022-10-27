@@ -5,10 +5,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	"github.com/nhie-io/api/internal/category"
-	"github.com/nhie-io/api/internal/database"
 	"github.com/nhie-io/api/internal/statement"
 	"github.com/nhie-io/api/internal/translate"
-	"gorm.io/gorm"
 	"html/template"
 	"net/http"
 )
@@ -55,27 +53,7 @@ func webRouter() chi.Router {
 			return
 		}
 
-		var pos int
-		var rID string
-
-		if err := database.C.Transaction(func(tx *gorm.DB) error {
-			if err := tx.Raw(`SELECT position FROM game WHERE id = ?;`, sID).Scan(&pos).Error; err != nil {
-				return err
-			}
-
-			if err := tx.Raw(`SELECT id
-						FROM (SELECT * FROM game WHERE position > ? UNION ALL SELECT * FROM game WHERE position < ?) AS game
-						WHERE category = ?
-						LIMIT 1;`, pos, pos, c.Random()).Scan(&rID).Error; err != nil {
-				return err
-			}
-
-			return nil
-		}); err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-
-		s, err := statement.GetByID(uuid.MustParse(rID))
+		s, err := statement.GetNextByPreviousIDAndCategory(sID, c.Random())
 
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

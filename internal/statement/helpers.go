@@ -36,3 +36,27 @@ func GetRandomByCategory(category category.Category) (*Statement, error) {
 
 	return &statement, err
 }
+
+func GetNextByPreviousIDAndCategory(ID uuid.UUID, category category.Category) (*Statement, error) {
+	var pos int
+	var nextID string
+
+	if err := database.C.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Raw(`SELECT position FROM game WHERE id = ?;`, ID).Scan(&pos).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Raw(`SELECT id
+						FROM (SELECT * FROM game WHERE position > ? UNION ALL SELECT * FROM game WHERE position < ?) AS game
+						WHERE category = ?
+						LIMIT 1;`, pos, pos, category).Scan(&nextID).Error; err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return GetByID(uuid.MustParse(nextID))
+}
