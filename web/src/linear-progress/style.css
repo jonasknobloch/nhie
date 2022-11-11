@@ -1,0 +1,71 @@
+.nhie-linear-progress {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    height: 4px;
+}
+
+.nhie-linear-progress--disabled {
+    opacity: 0;
+}
+
+.nhie-linear-progress--disabled > .nhie-linear-progress__bar {
+    animation: none;
+}
+
+.nhie-linear-progress__buffer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: lightgray;
+}
+
+.nhie-linear-progress__bar {
+    position: absolute;
+    height: 100%;
+    background-color: black;
+    will-change: left, right;
+}
+
+.nhie-linear-progress__bar--primary {
+    animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+
+.nhie-linear-progress__bar--secondary {
+    animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+}
+
+@keyframes indeterminate {
+    0% {
+        right: 100%;
+        left: -35%;
+    }
+
+    60% {
+        right: -90%;
+        left: 100%;
+    }
+
+    100% {
+        right: -90%;
+        left: 100%;
+    }
+}
+
+@keyframes indeterminate-short {
+    0% {
+        right: 100%;
+        left: -200%;
+    }
+
+    60% {
+        right: -8%;
+        left: 107%;
+    }
+
+    100% {
+        right: -8%;
+        left: 107%;
+    }
+}

@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>nhie.io</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/app.css">
 </head>
 <body class="nhie-layout">
 <div id="js-language-selection" class="nhie-language-selection nhie-language-selection--hidden">
     <label class="nhie-language-selection__label">
-        <input class="nhie-language-selection__input" type="radio" name="language" value="en" form="js-form" {{if eq .Language "en"}} checked {{end}}>english
+        <input class="nhie-language-selection__input" type="radio" name="language" value="en" {{if eq .Language "en"}} checked {{end}}>english
     </label>
     <label class="nhie-language-selection__label">
-        <input class="nhie-language-selection__input" type="radio" name="language" value="de" form="js-form" {{if eq .Language "de"}} checked {{end}}>deutsch
+        <input class="nhie-language-selection__input" type="radio" name="language" value="de" {{if eq .Language "de"}} checked {{end}}>deutsch
     </label>
 </div>
 <header class="nhie-top-app-bar">
@@ -26,38 +26,36 @@
             </button>
         </section>
     </div>
+    <div class="nhie-linear-progress nhie-linear-progress--disabled">
+        <div class="nhie-linear-progress__buffer"></div>
+        <div class="nhie-linear-progress__bar nhie-linear-progress__bar--primary"></div>
+        <div class="nhie-linear-progress__bar nhie-linear-progress__bar--secondary"></div>
+    </div>
 </header>
 <main class="nhie-layout__content">
-    <form id="js-form" action="/statements/next">
-        <div id="js-category-selection" class="nhie-category-selection">
-            <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if .Categories.Harmless}} checked {{end}}>
-                <img class="nhie-category__icon" src="/static/mojito.svg" width="56" height="72" alt="Mojito">
-                <span class="nhie-category__description">harmless</span>
-            </label>
-            <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if .Categories.Delicate}} checked {{end}}>
-                <img class="nhie-category__icon" src="/static/beer.svg" width="56" height="72" alt="Beer">
-                <span class="nhie-category__description">delicate</span>
-            </label>
-            <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if .Categories.Offensive}} checked {{end}}>
-                <img class="nhie-category__icon" src="/static/wine.svg" width="56" height="72" alt="Wine">
-                <span class="nhie-category__description">offensive</span>
-            </label>
-        </div>
-        <div class="nhie-statement">{{.Statement.Statement}}</div>
-        <input id="js-statement-id" type="hidden" value="{{.Statement.ID}}" name="statement_id">
-    </form>
+    <div class="nhie-category-selection">
+        <label class="nhie-category__label">
+            <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if .Categories.Harmless}} checked {{end}}>
+            <img class="nhie-category__icon" src="/static/mojito.svg" width="56" height="72" alt="Mojito">
+            <span class="nhie-category__description">harmless</span>
+        </label>
+        <label class="nhie-category__label">
+            <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if .Categories.Delicate}} checked {{end}}>
+            <img class="nhie-category__icon" src="/static/beer.svg" width="56" height="72" alt="Beer">
+            <span class="nhie-category__description">delicate</span>
+        </label>
+        <label class="nhie-category__label">
+            <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if .Categories.Offensive}} checked {{end}}>
+            <img class="nhie-category__icon" src="/static/wine.svg" width="56" height="72" alt="Wine">
+            <span class="nhie-category__description">offensive</span>
+        </label>
+    </div>
+    <div class="nhie-statement" data-id="{{.Statement.ID}}">{{.Statement.Statement}}</div>
 </main>
 <footer class="nhie-footer">
     <a class="nhie-footer__element" href="https://github.com/nhie-io" target="_blank" rel="noopener noreferrer">GitHub</a>
     <a class="nhie-footer__element" href="https://nhie.goatcounter.com" target="_blank" rel="noopener noreferrer">Analytics</a>
 </footer>
-<script type="text/javascript">
-    let url = new URL('{{.ContentLocation}}', window.location.origin);
-    window.history.replaceState({}, document.title, url.toString());
-</script>
 <script type="text/javascript" src="/static/app.js"></script>
 </body>
 </html>

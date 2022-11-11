@@ -35,32 +35,7 @@ func webRouter() chi.Router {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
 
-		renderGame(s, w, r)
-	})
-
-	router.Get("/statements/next", func(w http.ResponseWriter, r *http.Request) {
-		sID, ok := queryStatementID(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		c, ok := queryCategories(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		s, err := statement.GetNextByPreviousIDAndCategory(sID, c.Random())
-
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		renderGame(s, w, r)
+		http.Redirect(w, r, "/statements/"+s.ID.String(), http.StatusSeeOther)
 	})
 
 	router.Get("/statements/{statementID}", func(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +90,6 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	w.Header().Set("Content-Location", data.ContentLocation())
 
 	if err := templates.ExecuteTemplate(w, "index.html", data); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

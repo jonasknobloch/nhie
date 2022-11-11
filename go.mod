@@ -4,7 +4,9 @@ go 1.19
 
 require (
 	github.com/bounoable/deepl v0.5.1
+	github.com/evanw/esbuild v0.15.12
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/hostrouter v0.2.0
 	github.com/go-chi/render v1.0.2
 	github.com/google/uuid v1.3.0
@@ -26,5 +28,6 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	golang.org/x/crypto v0.0.0-20221012134737-56aed061732a // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )

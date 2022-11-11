@@ -1,0 +1,32 @@
+.nhie-language-selection {
+    display: flex;
+    height: 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    padding: 8px 12px;
+    background-color: black;
+}
+
+.nhie-language-selection--hidden {
+    display: none;
+}
+
+.nhie-language-selection__label {
+    margin: 0 12px;
+    color: white;
+    cursor: pointer;
+    font-family: Lato, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nhie-language-selection__input {
+    display: none;
+}
+
+.nhie-language-selection__label:has(.nhie-language-selection__input[type="radio"]:checked) {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}

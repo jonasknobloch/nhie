@@ -17,3 +17,6 @@
 # Docker related files
 build/
 deployments/
+
+# Include build command
+!cmd/build

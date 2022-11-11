@@ -8,7 +8,7 @@ import (
 func staticRouter() chi.Router {
 	router := chi.NewRouter()
 
-	router.Get("/*", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))).ServeHTTP)
+	router.Get("/*", http.StripPrefix("/static/", http.FileServer(http.Dir("web/build"))).ServeHTTP)
 
 	return router
 }
