@@ -18,13 +18,13 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: lightgray;
+    background: var(--color-primary);
 }
 
 .nhie-linear-progress__bar {
     position: absolute;
     height: 100%;
-    background-color: black;
+    background-color: var(--color-secondary);
     will-change: left, right;
 }
 

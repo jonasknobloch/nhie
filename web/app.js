@@ -3,6 +3,7 @@ import './style.css';
 import {NHIECategory} from './src/category';
 import {NHIECategorySelection} from './src/category-selection';
 import {NHIEClient} from './src/client';
+import {NHIEColorScheme} from "./src/color-scheme";
 import {NHIELanguageSelection} from './src/language-selection';
 import {NHIELinearProgress} from "./src/linear-progress";
 import {NHIEStatement} from './src/statement';
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageSelection = new NHIELanguageSelection();
 
     const linearProgress = new NHIELinearProgress();
+    const colorScheme = new NHIEColorScheme();
 
     const client = new NHIEClient();
 

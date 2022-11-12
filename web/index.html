@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>nhie.io</title>
+    <title>Never Have I Ever</title>
+    <meta name="description" content="Bringing the infamous drinking game to the web.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" type="text/css" href="/static/app.css">
 </head>
-<body class="nhie-layout">
+<body class="nhie-layout nhie-theme">
 <div id="js-language-selection" class="nhie-language-selection nhie-language-selection--hidden">
     <label class="nhie-language-selection__label">
         <input class="nhie-language-selection__input" type="radio" name="language" value="en" {{if eq .Language "en"}} checked {{end}}>english
@@ -21,8 +27,11 @@
             <span class="nhie-top-app-bar__title">nhie.io</span>
         </section>
         <section class="nhie-top-app-bar__section nhie-top-app-bar__section--align-end">
+            <button id="js-invert-color-scheme__toggle" class="nhie-top-app-bar__icon-button" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Invert Mode</title><path d="M414.39 97.61A224 224 0 1097.61 414.39 224 224 0 10414.39 97.61zM256 432v-96a80 80 0 010-160V80c97.05 0 176 79 176 176s-78.95 176-176 176z"/><path d="M336 256a80 80 0 00-80-80v160a80 80 0 0080-80z"/></svg>
+            </button>
             <button id="js-language-selection__toggle" class="nhie-top-app-bar__icon-button" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Globe</title><path d="M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48z" fill="none" stroke-miterlimit="10" stroke-width="44"/><path d="M256 48c-58.07 0-112.67 93.13-112.67 208S197.93 464 256 464s112.67-93.13 112.67-208S314.07 48 256 48z" fill="none" stroke-miterlimit="10" stroke-width="44"/><path d="M117.33 121.33c38.24 27.15 86.38 43.34 138.67 43.34s100.43-16.19 138.67-43.34M394.67 390.67c-38.24-27.15-86.38-43.34-138.67-43.34s-100.43 16.19-138.67 43.34" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="44"/><path fill="none" stroke-miterlimit="10" stroke-width="44" d="M256 48v416M464 256H48"/></svg>
             </button>
         </section>
     </div>
@@ -33,24 +42,27 @@
     </div>
 </header>
 <main class="nhie-layout__content">
-    <div class="nhie-category-selection">
-        <label class="nhie-category__label">
-            <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if .Categories.Harmless}} checked {{end}}>
-            <img class="nhie-category__icon" src="/static/mojito.svg" width="56" height="72" alt="Mojito">
-            <span class="nhie-category__description">harmless</span>
-        </label>
-        <label class="nhie-category__label">
-            <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if .Categories.Delicate}} checked {{end}}>
-            <img class="nhie-category__icon" src="/static/beer.svg" width="56" height="72" alt="Beer">
-            <span class="nhie-category__description">delicate</span>
-        </label>
-        <label class="nhie-category__label">
-            <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if .Categories.Offensive}} checked {{end}}>
-            <img class="nhie-category__icon" src="/static/wine.svg" width="56" height="72" alt="Wine">
-            <span class="nhie-category__description">offensive</span>
-        </label>
-    </div>
-    <div class="nhie-statement" data-id="{{.Statement.ID}}">{{.Statement.Statement}}</div>
+    <form id="js-form" action="/statements/next">
+        <div id="js-category-selection" class="nhie-category-selection">
+            <label class="nhie-category__label">
+                <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if .Categories.Harmless}} checked {{end}}>
+                <img class="nhie-category__icon" src="/static/mojito.svg" width="56" height="72" alt="Mojito">
+                <span class="nhie-category__description">harmless</span>
+            </label>
+            <label class="nhie-category__label">
+                <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if .Categories.Delicate}} checked {{end}}>
+                <img class="nhie-category__icon" src="/static/beer.svg" width="56" height="72" alt="Beer">
+                <span class="nhie-category__description">delicate</span>
+            </label>
+            <label class="nhie-category__label">
+                <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if .Categories.Offensive}} checked {{end}}>
+                <img class="nhie-category__icon" src="/static/wine.svg" width="56" height="72" alt="Wine">
+                <span class="nhie-category__description">offensive</span>
+            </label>
+        </div>
+        <div class="nhie-statement">{{.Statement.Statement}}</div>
+        <input id="js-statement-id" type="hidden" value="{{.Statement.ID}}" name="statement_id">
+    </form>
 </main>
 <footer class="nhie-footer">
     <a class="nhie-footer__element" href="https://github.com/nhie-io" target="_blank" rel="noopener noreferrer">GitHub</a>

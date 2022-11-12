@@ -37,6 +37,18 @@ func main() {
 	if err := copyFile("web/static/wine.svg", "web/build/wine.svg"); err != nil {
 		log.Fatal(err)
 	}
+
+	if err := copyFile("web/static/favicon-16x16.png", "web/build/favicon-16x16.png"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := copyFile("web/static/favicon-32x32.png", "web/build/favicon-32x32.png"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := copyFile("web/static/favicon-96x96.png", "web/build/favicon-96x96.png"); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func copyFile(src, dst string) error {

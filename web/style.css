@@ -1,3 +1,25 @@
+/* @font-face {
+    font-family: Lato;
+    font-weight: 400;
+    font-style: normal;
+    src:
+            local(""),
+            url("lato-v23-latin-regular.woff2") format("woff2"),
+            url("lato-v23-latin-regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: Lato;
+    font-weight: 700;
+    font-style: normal;
+    src:
+            local(""),
+            url("lato-v23-latin-700.woff2") format("woff2"),
+            url("lato-v23-latin-700.woff") format("woff");
+} */
+
+/* TODO local? + copy static files? go html parser? */
+
 html {
     height: 100%;
 }
@@ -12,10 +34,34 @@ body {
     box-sizing: border-box;
 }
 
+.nhie-theme {
+    --color-primary: #ffeecb;
+    --color-secondary: #212121;
+}
+
+.nhie-theme--invert {
+    --color-primary: #212121;
+    --color-secondary: #ffeecb;
+}
+
+@media (prefers-color-scheme: dark) {
+    .nhie-theme {
+        --color-primary: #212121;
+        --color-secondary: #ffeecb;
+    }
+
+    .nhie-theme--invert {
+        --color-primary: #ffeecb;
+        --color-secondary: #212121;
+    }
+}
+
 .nhie-layout {
     display: flex;
     height: 100%;
     flex-direction: column;
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
 }
 
 .nhie-layout__content {
@@ -34,8 +80,6 @@ body {
     box-sizing: border-box;
     flex-direction: column;
     justify-content: space-between;
-    background-color: white;
-    color: black;
 }
 
 .nhie-top-app-bar__row {
@@ -71,7 +115,7 @@ body {
     padding-left: 20px;
     font-family: Lato, sans-serif;
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: bold;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -90,6 +134,11 @@ body {
     user-select: none;
 }
 
+.nhie-top-app-bar__icon-button > svg {
+    fill: var(--color-secondary);
+    stroke: var(--color-secondary);
+}
+
 .nhie-footer {
     display: flex;
     height: 56px;
@@ -102,7 +151,7 @@ body {
 
 .nhie-footer__element {
     margin: 8px;
-    color: black;
+    color: var(--color-secondary);
     text-decoration: none;
     user-select: none;
 }

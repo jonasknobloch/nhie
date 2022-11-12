@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 56 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"><g id="mojito"><rect x="0" y="0" width="56" height="72" style="fill:#fff;fill-opacity:0;"/><g><circle cx="38.604" cy="29.577" r="10.604" style="fill:#94f20d;stroke:#000;stroke-width:4.2px;"/><path d="M41.765,27.875l-27.53,-0l4.096,41.598l19.338,-0l4.096,-41.598Z" style="fill:#95dd9b;stroke:#000;stroke-width:4.2px;"/><path d="M16.084,17.07l10.886,51.124l-10.886,-51.124Z" style="fill:#95dd9b;stroke:#000;stroke-width:4.2px;stroke-linecap:square;"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 168 216" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(1,0,0,1,-9504.22,-1591.75)">
+        <g transform="matrix(0.516066,0,0,0.45788,8773.98,1493.75)">
+            <g id="mojito" transform="matrix(0.871981,0,0,0.98279,1415,214.03)">
+                <g transform="matrix(1.08527,0,0,0.914286,3.63798e-12,0)">
+                    <rect x="0" y="0" width="344" height="525" style="fill:white;fill-opacity:0;"/>
+                </g>
+                <g transform="matrix(1,0,0,1,11.6847,-1.3107)">
+                    <circle cx="245.673" cy="198.489" r="70.692" style="fill:rgb(0,209,134);stroke:rgb(0,209,134);stroke-width:28px;"/>
+                    <path d="M266.748,187.142L83.216,187.142L110.523,464.462L239.442,464.462L266.748,187.142Z" style="fill:rgb(150,225,172);stroke:rgb(2,138,109);stroke-width:28px;"/>
+                    <path d="M95.541,115.111L168.114,455.937L95.541,115.111Z" style="fill:none;stroke:rgb(2,138,109);stroke-width:28px;stroke-linecap:square;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
