@@ -7,15 +7,20 @@ import (
 )
 
 type state struct {
-	statement  *statement.Statement
-	categories *category.Selection
-	language   language.Tag
+	statement   *statement.Statement
+	categories  *category.Selection
+	language    language.Tag
+	preferences *preferences
 }
 
 type categories struct {
 	Harmless  bool
 	Delicate  bool
 	Offensive bool
+}
+
+type preferences struct {
+	InvertColorScheme bool
 }
 
 func (s state) Statement() *statement.Statement {
@@ -32,6 +37,10 @@ func (s state) Categories() categories {
 
 func (s state) Language() string {
 	return s.language.String()
+}
+
+func (s state) Preferences() preferences {
+	return *s.preferences
 }
 
 func (s state) ContentLocation() string {

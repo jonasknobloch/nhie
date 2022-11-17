@@ -6,6 +6,7 @@ import (
 	"github.com/nhie-io/api/internal/translate"
 	"golang.org/x/text/language"
 	"net/http"
+	"strconv"
 )
 
 func queryLanguage(request *http.Request) (language.Tag, bool) {
@@ -60,4 +61,20 @@ func queryStatementID(request *http.Request) (uuid.UUID, bool) {
 	}
 
 	return id, true
+}
+
+func queryInvertColorScheme(request *http.Request) (bool, bool) {
+	val := request.URL.Query().Get("invert_color_scheme")
+
+	if val == "" {
+		return false, false
+	}
+
+	b, err := strconv.ParseBool(val)
+
+	if err != nil {
+		return false, false
+	}
+
+	return b, true
 }

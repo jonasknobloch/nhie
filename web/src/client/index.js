@@ -7,10 +7,12 @@ export class NHIEClient {
     this.features.set(key, callback);
   }
 
-  async fetchStatement() {
-    let url = new URL('http://api.nhie.local/v2/statements/next')
-
+  encodeFeatures(url, filter) {
     this.features.forEach((callback, key) => {
+      if (filter !== undefined && !filter(key)) {
+        return;
+      }
+
       const value = callback();
 
       if (Array.isArray(value)) {
@@ -18,8 +20,21 @@ export class NHIEClient {
       } else {
         url.searchParams.set(key, value);
       }
-    })
+    });
 
-    return fetch(url)
+    return url;
+  }
+
+  limitFeatures() {
+    let keys = Array.from(arguments);
+
+    return (key) => {
+      return keys.includes(key);
+    }
+  }
+
+  async fetchStatement() {
+    let url = new URL('http://api.nhie.local/v2/statements/next')
+    return fetch(this.encodeFeatures(url, this.limitFeatures('language', 'category')));
   }
 }

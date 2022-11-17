@@ -9,6 +9,8 @@ import {NHIELinearProgress} from "./src/linear-progress";
 import {NHIEStatement} from './src/statement';
 
 document.addEventListener('DOMContentLoaded', () => {
+    limitSearchParams('language');
+
     const statement = new NHIEStatement();
 
     const categories = [].slice.call(document.querySelectorAll('.nhie-category__input')).map((e) => new NHIECategory(e));
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     client.registerFeature('statement_id', () => statement.ID);
     client.registerFeature('category', () => categorySelection.activeCategories.map((c) => c.key));
     client.registerFeature('language', () => languageSelection.activeLanguage);
+    client.registerFeature('invert_color_scheme', () => colorScheme.invertColorScheme ? 'true' : 'false');
 
     document.addEventListener('keyup', (keyboardEvent) => {
         if (keyboardEvent.code === 'Space') {
@@ -33,12 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.addEventListener('language-changed', () => {
+    document.querySelector('main').addEventListener('click', () => {
         refreshStatement();
     });
 
-    document.querySelector('main').addEventListener('click', () => {
-        refreshStatement();
+    document.addEventListener('language-changed', () => {
+        let url = new URL(window.location.href);
+        client.encodeFeatures(url, client.limitFeatures('language', 'category', 'invert_color_scheme'));
+        window.location.assign(url);
     });
 
     let refreshing = false;
@@ -53,14 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return response.json()
                 })
                 .then((result) => {
-                    let url = new URL(window.location.href);
-                    let path = url.pathname.split('/');
-
-                    path[path.length - 1] = result.ID;
-                    url.pathname = path.join('/');
-
-                    window.history.replaceState({}, document.title, url.toString());
-
+                    replaceStatementID(result.ID);
                     return result;
                 })
                 .then((result) => {
@@ -78,3 +76,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+function limitSearchParams() {
+    let url = new URL(window.location.href);
+    let keys = Array.from(arguments);
+
+    let removals = Array();
+
+    url.searchParams.forEach((value, key, ) => {
+        if (keys.includes(key)) {
+             return;
+        }
+
+        if (removals.includes(key)) {
+            return;
+        }
+
+        removals.push(key);
+    });
+
+    removals.forEach((key) => {url.searchParams.delete(key)})
+
+    window.history.replaceState({}, document.title, url);
+}
+
+function replaceStatementID(ID) {
+    let url = new URL(window.location.href);
+    let path = url.pathname.split('/');
+
+    path[path.length - 1] = ID;
+    url.pathname = path.join('/');
+
+    window.history.replaceState({}, document.title, url);
+}

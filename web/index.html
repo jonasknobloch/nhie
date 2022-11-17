@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" type="text/css" href="/static/app.css">
 </head>
-<body class="nhie-layout nhie-theme">
+<body class="nhie-layout nhie-theme {{if .Preferences.InvertColorScheme}} nhie-theme--invert {{end}}">
 <div id="js-language-selection" class="nhie-language-selection nhie-language-selection--hidden">
     <label class="nhie-language-selection__label">
         <input class="nhie-language-selection__input" type="radio" name="language" value="en" {{if eq .Language "en"}} checked {{end}}>english

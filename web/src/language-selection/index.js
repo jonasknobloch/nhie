@@ -15,8 +15,6 @@ export class NHIELanguageSelection {
       language.addEventListener('click', () => {
         selection.classList.toggle('nhie-language-selection--hidden');
         document.dispatchEvent(event);
-
-        // TODO full reload instead to ensure UI is translated as well
       });
     });
   }

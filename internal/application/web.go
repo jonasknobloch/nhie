@@ -84,10 +84,13 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 	}
 
 	data := state{
-		statement:  s,
-		categories: c,
-		language:   l,
+		statement:   s,
+		categories:  c,
+		language:    l,
+		preferences: &preferences{},
 	}
+
+	data.preferences.InvertColorScheme, _ = queryInvertColorScheme(r)
 
 	w.Header().Set("Content-Type", "text/html")
 
