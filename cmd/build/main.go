@@ -9,6 +9,14 @@ import (
 import "os"
 
 func main() {
+	onRebuild := func(result api.BuildResult) {
+		if len(result.Errors) > 0 {
+			fmt.Printf("Build failed: %d errors\n", len(result.Errors))
+		} else {
+			fmt.Printf("Build succeeded: %d warnings\n", len(result.Warnings))
+		}
+	}
+
 	result := api.Build(api.BuildOptions{
 		EntryPoints:       []string{"web/app.js"},
 		Outdir:            "web/build",
@@ -16,7 +24,9 @@ func main() {
 		MinifyIdentifiers: false,
 		Write:             true,
 		Bundle:            true,
-		Watch:             &api.WatchMode{},
+		Watch: &api.WatchMode{
+			OnRebuild: onRebuild,
+		},
 	})
 
 	if len(result.Errors) > 0 {
