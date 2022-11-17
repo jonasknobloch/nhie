@@ -16,6 +16,7 @@ func main() {
 		MinifyIdentifiers: false,
 		Write:             true,
 		Bundle:            true,
+		Watch:             &api.WatchMode{},
 	})
 
 	if len(result.Errors) > 0 {
@@ -49,6 +50,10 @@ func main() {
 	if err := copyFile("web/static/favicon-96x96.png", "web/build/favicon-96x96.png"); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("Watching...")
+
+	<-make(chan bool)
 }
 
 func copyFile(src, dst string) error {
