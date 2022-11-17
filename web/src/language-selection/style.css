@@ -21,11 +21,11 @@
     text-decoration: none;
 }
 
-.nhie-language-selection__input {
-    display: none;
-}
-
-.nhie-language-selection__label:has(.nhie-language-selection__input[type="radio"]:checked) {
+.nhie-language-selection__label--selected {
     text-decoration: underline;
     text-decoration-thickness: 2px;
+}
+
+.nhie-language-selection__input {
+    display: none;
 }
