@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/nhie-io/api/internal/application"
 	"github.com/nhie-io/api/internal/database"
@@ -58,5 +57,5 @@ func init() {
 }
 
 func envNotSetError(env string) error {
-	return errors.New(fmt.Sprintf("required environment variabale \"%s\" not set", env))
+	return fmt.Errorf("required environment variabale \"%s\" not set", env)
 }
