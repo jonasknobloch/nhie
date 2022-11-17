@@ -30,7 +30,7 @@ func queryCategories(request *http.Request) (*category.Selection, bool) {
 
 	selection := category.NewSelection()
 
-	for _, val := range append(query["category"]) {
+	for _, val := range query["category"] {
 		if c, ok := category.Match(val); !ok {
 			return selection, false
 		} else {
