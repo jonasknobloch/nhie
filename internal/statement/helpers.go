@@ -27,7 +27,7 @@ func GetRandomByCategory(category category.Category) (*Statement, error) {
 			return err
 		}
 
-		if err := database.C.Raw(`SELECT id, statement, category FROM game OFFSET ? LIMIT 1;`, rand.Intn(pool)).Scan(&statement).Error; err != nil {
+		if err := database.C.Raw(`SELECT id, statement, category FROM game WHERE category = ? OFFSET ? LIMIT 1;`, category, rand.Intn(pool)).Scan(&statement).Error; err != nil {
 			return err
 		}
 
