@@ -60,8 +60,7 @@
                 <span class="nhie-category__description">offensive</span>
             </label>
         </div>
-        <div class="nhie-statement">{{.Statement.Statement}}</div>
-        <input id="js-statement-id" type="hidden" value="{{.Statement.ID}}" name="statement_id">
+        <div class="nhie-statement" data-id="{{.Statement.ID}}">{{.Statement.Statement}}</div>
     </form>
 </main>
 <footer class="nhie-footer">

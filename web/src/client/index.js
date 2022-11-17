@@ -35,6 +35,6 @@ export class NHIEClient {
 
   async fetchStatement() {
     let url = new URL('http://api.nhie.local/v2/statements/next')
-    return fetch(this.encodeFeatures(url, this.limitFeatures('language', 'category')));
+    return fetch(this.encodeFeatures(url, this.limitFeatures('statement_id', 'language', 'category')));
   }
 }
