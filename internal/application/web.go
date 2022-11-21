@@ -1,12 +1,14 @@
 package application
 
 import (
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/statement"
 	"github.com/nhie-io/api/internal/translate"
+	"golang.org/x/text/language"
 	"html/template"
 	"net/http"
 )
@@ -35,7 +37,17 @@ func webRouter() chi.Router {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
 
-		http.Redirect(w, r, "/statements/"+s.ID.String(), http.StatusSeeOther)
+		tags, err := translate.EvaluateAcceptLanguageHeader(r.Header.Get("Accept-Language"))
+
+		var tag language.Tag
+
+		if err != nil {
+			tag = translate.SourceLanguage
+		} else {
+			tag = translate.MatchLanguage(tags)
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/statements/%s?language=%s", s.ID.String(), tag), http.StatusSeeOther)
 	})
 
 	router.Get("/statements/{statementID}", func(w http.ResponseWriter, r *http.Request) {

@@ -15,9 +15,7 @@ var (
 	ErrUnsupportedLanguage = errors.New("unsupported language")
 )
 
-var SourceLanguage = language.English
-
-var languages = map[language.Tag]deepl.Language{
+var deeplLanguage = map[language.Tag]deepl.Language{
 	language.English: deepl.EnglishAmerican,
 	language.German:  deepl.German,
 }
@@ -35,7 +33,7 @@ func MatchTag(input string) (language.Tag, error) {
 		return language.Und, ErrInvalidLanguageTag
 	}
 
-	if _, ok := languages[tag]; !ok {
+	if _, ok := deeplLanguage[tag]; !ok {
 		return language.Und, ErrUnsupportedLanguage
 	}
 
@@ -43,7 +41,7 @@ func MatchTag(input string) (language.Tag, error) {
 }
 
 func TranslateStatement(s *statement.Statement, t language.Tag) error {
-	l, ok := languages[t]
+	l, ok := deeplLanguage[t]
 
 	if !ok {
 		return ErrUnsupportedLanguage
@@ -67,7 +65,7 @@ func TranslateStatement(s *statement.Statement, t language.Tag) error {
 func TranslateMissing(t language.Tag) error {
 	statements := make([]statement.Statement, 0)
 
-	_, ok := languages[t]
+	_, ok := deeplLanguage[t]
 
 	if !ok {
 		return ErrUnsupportedLanguage
