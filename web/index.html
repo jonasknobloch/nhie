@@ -45,19 +45,19 @@
     <form id="js-form" action="/statements/next">
         <div id="js-category-selection" class="nhie-category-selection">
             <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if .Categories.Harmless}} checked {{end}}>
+                <input class="nhie-category__input" type="checkbox" name="category" value="harmless" {{if (ne .Categories.Harmless "")}} checked {{end}}>
                 <img class="nhie-category__icon" src="/static/mojito.svg" width="56" height="72" alt="Mojito">
-                <span class="nhie-category__description">harmless</span>
+                <span class="nhie-category__description">{{.Categories.Harmless}}</span>
             </label>
             <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if .Categories.Delicate}} checked {{end}}>
+                <input class="nhie-category__input" type="checkbox" name="category" value="delicate" {{if (ne .Categories.Delicate "")}} checked {{end}}>
                 <img class="nhie-category__icon" src="/static/beer.svg" width="56" height="72" alt="Beer">
-                <span class="nhie-category__description">delicate</span>
+                <span class="nhie-category__description">{{.Categories.Delicate}}</span>
             </label>
             <label class="nhie-category__label">
-                <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if .Categories.Offensive}} checked {{end}}>
+                <input class="nhie-category__input" type="checkbox" name="category" value="offensive" {{if (ne .Categories.Offensive "")}} checked {{end}}>
                 <img class="nhie-category__icon" src="/static/wine.svg" width="56" height="72" alt="Wine">
-                <span class="nhie-category__description">offensive</span>
+                <span class="nhie-category__description">{{.Categories.Offensive}}</span>
             </label>
         </div>
         <div class="nhie-statement" data-id="{{.Statement.ID}}">{{.Statement.Statement}}</div>

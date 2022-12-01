@@ -3,6 +3,7 @@ package application
 import (
 	"github.com/nhie-io/api/internal/category"
 	"github.com/nhie-io/api/internal/statement"
+	"github.com/nhie-io/api/internal/translate"
 	"golang.org/x/text/language"
 )
 
@@ -14,9 +15,9 @@ type state struct {
 }
 
 type categories struct {
-	Harmless  bool
-	Delicate  bool
-	Offensive bool
+	Harmless  string
+	Delicate  string
+	Offensive string
 }
 
 type preferences struct {
@@ -28,11 +29,21 @@ func (s state) Statement() *statement.Statement {
 }
 
 func (s state) Categories() categories {
-	return categories{
-		Harmless:  s.categories.Has(category.Harmless),
-		Delicate:  s.categories.Has(category.Delicate),
-		Offensive: s.categories.Has(category.Offensive),
+	c := categories{}
+
+	if s.categories.Has(category.Harmless) {
+		c.Harmless, _ = translate.TranslateCategory(category.Harmless, s.language)
 	}
+
+	if s.categories.Has(category.Delicate) {
+		c.Delicate, _ = translate.TranslateCategory(category.Delicate, s.language)
+	}
+
+	if s.categories.Has(category.Offensive) {
+		c.Offensive, _ = translate.TranslateCategory(category.Offensive, s.language)
+	}
+
+	return c
 }
 
 func (s state) Language() string {
