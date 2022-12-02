@@ -10,6 +10,7 @@ import (
 
 const WebHostEnv = "NHIE_WEB_HOST"
 const APIHostEnv = "NHIE_API_HOST"
+const URLSchemeEnv = "NHIE_URL_SCHEME"
 const PostgresDSNEnv = "NHIE_POSTGRES_DSN"
 
 func main() {
@@ -39,7 +40,13 @@ func main() {
 		log.Fatal(envNotSetError(APIHostEnv))
 	}
 
-	if err := application.Init(webHost, apiHost); err != nil {
+	urlScheme, ok := os.LookupEnv(URLSchemeEnv)
+
+	if !ok {
+		urlScheme = "https"
+	}
+
+	if err := application.Init(webHost, apiHost, urlScheme); err != nil {
 		log.Fatal(err)
 	}
 }

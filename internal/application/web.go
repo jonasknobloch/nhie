@@ -90,9 +90,14 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 		categories:  c,
 		language:    l,
 		preferences: &preferences{},
+		config:      &config{},
 	}
 
 	data.preferences.InvertColorScheme, _ = queryInvertColorScheme(r)
+
+	data.config.WebHost = WebHost
+	data.config.ApiHost = ApiHost
+	data.config.URLScheme = URLScheme
 
 	w.Header().Set("Content-Type", "text/html")
 

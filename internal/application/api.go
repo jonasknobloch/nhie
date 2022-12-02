@@ -16,7 +16,7 @@ func apiRouter() chi.Router {
 	router.Use(middleware.Logger)
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"https://nhie.local", "http://nhie.local"},
+		AllowedOrigins: []string{URLScheme + "://" + WebHost},
 	}))
 
 	router.Get("/v1/statements/random", func(w http.ResponseWriter, r *http.Request) {

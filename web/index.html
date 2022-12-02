@@ -24,7 +24,7 @@
 <header class="nhie-top-app-bar">
     <div class="nhie-top-app-bar__row">
         <section class="nhie-top-app-bar__section nhie-top-app-bar__section--align-start">
-            <span class="nhie-top-app-bar__title">nhie.io</span>
+            <span class="nhie-top-app-bar__title">{{.Config.WebHost}}</span>
         </section>
         <section class="nhie-top-app-bar__section nhie-top-app-bar__section--align-end">
             <button id="js-invert-color-scheme__toggle" class="nhie-top-app-bar__icon-button" type="button">
@@ -73,6 +73,6 @@
   }
 </script>
 <script data-goatcounter="https://nhie.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
-<script type="text/javascript" src="/static/app.js"></script>
+<script data-nhie="{{.Config.URLScheme}}://{{.Config.ApiHost}}/v2/statements/next" type="text/javascript" src="/static/app.js"></script>
 </body>
 </html>

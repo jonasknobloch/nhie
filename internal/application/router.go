@@ -7,7 +7,17 @@ import (
 	"net/http"
 )
 
-func Init(webHost, apiHost string) error {
+var (
+	WebHost   string
+	ApiHost   string
+	URLScheme string
+)
+
+func Init(webHost, apiHost, urlScheme string) error {
+	WebHost = webHost
+	ApiHost = apiHost
+	URLScheme = urlScheme
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.Compress(5, "text/html"))

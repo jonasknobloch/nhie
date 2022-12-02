@@ -12,6 +12,7 @@ type state struct {
 	categories  *category.Selection
 	language    language.Tag
 	preferences *preferences
+	config      *config
 }
 
 type categories struct {
@@ -22,6 +23,12 @@ type categories struct {
 
 type preferences struct {
 	InvertColorScheme bool
+}
+
+type config struct {
+	WebHost   string
+	ApiHost   string
+	URLScheme string
 }
 
 func (s state) Statement() *statement.Statement {
@@ -52,6 +59,10 @@ func (s state) Language() string {
 
 func (s state) Preferences() preferences {
 	return *s.preferences
+}
+
+func (s state) Config() config {
+	return *s.config
 }
 
 func (s state) ContentLocation() string {
