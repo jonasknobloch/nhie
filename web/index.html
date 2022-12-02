@@ -65,6 +65,14 @@
     <a class="nhie-footer__element" href="https://github.com/nhie-io" target="_blank" rel="noopener noreferrer">GitHub</a>
     <a class="nhie-footer__element" href="https://nhie.goatcounter.com" target="_blank" rel="noopener noreferrer">Analytics</a>
 </footer>
+<script>
+  if (window.location.host === 'nhie.io') {
+    window.goatcounter = { path: '/' }
+  } else {
+    window.goatcounter = { no_onload: true }
+  }
+</script>
+<script data-goatcounter="https://nhie.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <script type="text/javascript" src="/static/app.js"></script>
 </body>
 </html>
