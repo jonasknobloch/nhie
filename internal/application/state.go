@@ -1,9 +1,9 @@
 package application
 
 import (
-	"github.com/nhie-io/api/internal/category"
-	"github.com/nhie-io/api/internal/statement"
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/category"
+	"github.com/jonasknobloch/nhie/internal/statement"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"golang.org/x/text/language"
 )
 

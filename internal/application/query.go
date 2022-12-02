@@ -2,8 +2,8 @@ package application
 
 import (
 	"github.com/google/uuid"
-	"github.com/nhie-io/api/internal/category"
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/category"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"golang.org/x/text/language"
 	"net/http"
 	"strconv"

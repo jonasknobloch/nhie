@@ -5,9 +5,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
-	"github.com/nhie-io/api/internal/category"
-	"github.com/nhie-io/api/internal/statement"
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/category"
+	"github.com/jonasknobloch/nhie/internal/statement"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"html/template"
 	"net/http"
 )

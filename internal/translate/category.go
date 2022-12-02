@@ -1,7 +1,7 @@
 package translate
 
 import (
-	"github.com/nhie-io/api/internal/category"
+	"github.com/jonasknobloch/nhie/internal/category"
 	"golang.org/x/text/language"
 )
 

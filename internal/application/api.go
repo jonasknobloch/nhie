@@ -5,8 +5,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/nhie-io/api/internal/statement"
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/statement"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"net/http"
 )
 

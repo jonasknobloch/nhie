@@ -1,6 +1,6 @@
 # Never Have I Ever
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/nhie-io/api)](https://goreportcard.com/report/github.com/nhie-io/api)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jonasknobloch/nhie)](https://goreportcard.com/report/github.com/jonasknobloch/nhie)
 
 ## API
 

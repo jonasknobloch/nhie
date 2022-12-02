@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/bounoable/deepl"
-	"github.com/nhie-io/api/internal/database"
-	"github.com/nhie-io/api/internal/statement"
+	"github.com/jonasknobloch/nhie/internal/database"
+	"github.com/jonasknobloch/nhie/internal/statement"
 	"golang.org/x/text/language"
 	"time"
 )

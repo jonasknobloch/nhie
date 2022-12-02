@@ -1,4 +1,4 @@
-module github.com/nhie-io/api
+module github.com/jonasknobloch/nhie
 
 go 1.19
 

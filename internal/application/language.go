@@ -1,7 +1,7 @@
 package application
 
 import (
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"golang.org/x/text/language"
 	"net/http"
 )

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/nhie-io/api/internal/database"
-	"github.com/nhie-io/api/internal/translate"
+	"github.com/jonasknobloch/nhie/internal/database"
+	"github.com/jonasknobloch/nhie/internal/translate"
 	"golang.org/x/text/language"
 	"log"
 	"os"

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/nhie-io/api/internal/application"
-	"github.com/nhie-io/api/internal/database"
+	"github.com/jonasknobloch/nhie/internal/application"
+	"github.com/jonasknobloch/nhie/internal/database"
 	"log"
 	"os"
 )
