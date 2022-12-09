@@ -8,6 +8,7 @@ import (
 	"github.com/jonasknobloch/nhie/internal/category"
 	"github.com/jonasknobloch/nhie/internal/statement"
 	"github.com/jonasknobloch/nhie/internal/translate"
+	"github.com/jonasknobloch/nhie/web"
 	"html/template"
 	"net/http"
 )
@@ -15,7 +16,7 @@ import (
 var templates *template.Template
 
 func init() {
-	templates = template.Must(template.ParseFiles("web/index.html"))
+	templates = template.Must(template.New("index").Parse(web.Index))
 }
 
 func webRouter() chi.Router {
@@ -101,7 +102,7 @@ func renderGame(s *statement.Statement, w http.ResponseWriter, r *http.Request) 
 
 	w.Header().Set("Content-Type", "text/html")
 
-	if err := templates.ExecuteTemplate(w, "index.html", data); err != nil {
+	if err := templates.ExecuteTemplate(w, "index", data); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
