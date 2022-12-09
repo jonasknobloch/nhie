@@ -5,18 +5,10 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"io"
 	"log"
+	"os"
 )
-import "os"
 
 func main() {
-	onRebuild := func(result api.BuildResult) {
-		if len(result.Errors) > 0 {
-			fmt.Printf("Build failed: %d errors\n", len(result.Errors))
-		} else {
-			fmt.Printf("Build succeeded: %d warnings\n", len(result.Warnings))
-		}
-	}
-
 	result := api.Build(api.BuildOptions{
 		EntryPoints:       []string{"web/app.js"},
 		Outdir:            "web/build",
@@ -24,9 +16,6 @@ func main() {
 		MinifyIdentifiers: false,
 		Write:             true,
 		Bundle:            true,
-		Watch: &api.WatchMode{
-			OnRebuild: onRebuild,
-		},
 	})
 
 	if len(result.Errors) > 0 {
@@ -60,10 +49,6 @@ func main() {
 	if err := copyFile("web/static/favicon-96x96.png", "web/build/favicon-96x96.png"); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("Watching...")
-
-	<-make(chan bool)
 }
 
 func copyFile(src, dst string) error {
