@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	if err := os.RemoveAll("web/build"); err != nil {
+		log.Fatal(err)
+	}
+
 	result := api.Build(api.BuildOptions{
 		EntryPoints:       []string{"web/app.js"},
 		Outdir:            "web/build",
