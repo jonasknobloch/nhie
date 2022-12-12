@@ -14,9 +14,5 @@
 # Dotenv files
 *.env
 
-# Docker related files
-build/
-deployments/
-
-# Include build command
-!cmd/build
+# Build output
+web/build/

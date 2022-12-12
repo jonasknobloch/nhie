@@ -1,0 +1,48 @@
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.docker
+      - --api
+      - --certificatesresolvers.le.acme.email=${NHIE_LE_DEFAULT_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/traefik/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /root/traefik:/traefik
+    labels:
+      - "traefik.http.routers.traefik.rule=Host(`${NHIE_TRAEFIK_HOST}`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=le"
+
+      # basic auth middleware
+      - "traefik.http.routers.traefik.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=${NHIE_TRAEFIK_CREDENTIALS}"
+
+      # global redirect to https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+
+      # middleware redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  nhie:
+    image: nhie
+    restart: unless-stopped
+    environment:
+      NHIE_WEB_HOST: ${NHIE_WEB_HOST}
+      NHIE_API_HOST: ${NHIE_API_HOST}
+      NHIE_POSTGRES_DSN: ${NHIE_POSTGRES_DSN}
+    labels:
+      - "traefik.http.routers.nhie.rule=Host(`${NHIE_WEB_HOST}`, `${NHIE_API_HOST}`)"
+      - "traefik.http.routers.nhie.entrypoints=websecure"
+      - "traefik.http.routers.nhie.tls=true"
+      - "traefik.http.routers.nhie.tls.certresolver=le"
