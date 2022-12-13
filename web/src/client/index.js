@@ -1,7 +1,7 @@
 export class NHIEClient {
   constructor() {
     this.features = new Map();
-    this.endpoint = new URL(document.querySelector('script[data-nhie]').dataset.nhie);
+    this.endpoint = document.querySelector('script[data-nhie]').dataset.nhie;
   }
 
   registerFeature(key, callback) {
@@ -35,6 +35,6 @@ export class NHIEClient {
   }
 
   async fetchStatement() {
-    return fetch(this.encodeFeatures(this.endpoint, this.limitFeatures('statement_id', 'language', 'category')));
+    return fetch(this.encodeFeatures(new URL(this.endpoint), this.limitFeatures('statement_id', 'language', 'category')));
   }
 }
