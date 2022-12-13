@@ -36,6 +36,8 @@ services:
 
   nhie:
     image: nhie
+    build:
+      context: .
     restart: unless-stopped
     environment:
       NHIE_WEB_HOST: ${NHIE_WEB_HOST}
