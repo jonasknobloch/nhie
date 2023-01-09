@@ -20,7 +20,7 @@ func main() {
 		defer db.Close()
 	}
 
-	err := translate.TranslateMissing(language.German)
+	err := translate.TranslateMissing(language.Swedish)
 
 	if err != nil {
 		log.Fatal(err)

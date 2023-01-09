@@ -18,6 +18,7 @@ var (
 var deeplLanguage = map[language.Tag]deepl.Language{
 	language.English: deepl.EnglishAmerican,
 	language.German:  deepl.German,
+	language.Swedish: deepl.Swedish,
 }
 
 var client *deepl.Client
