@@ -6,6 +6,9 @@ This project aims at providing a no-bullshit "Never Have I Ever" experience.
 Available features are intentionally limited to the bare minimum.
 Use the provided API to implement own ideas.
 
+| ![nhie_28be7d12-90b4-4846-b86a-73040eff11ec_dark.png](nhie_28be7d12-90b4-4846-b86a-73040eff11ec_dark.png)  | ![nhie_28be7d12-90b4-4846-b86a-73040eff11ec_light.png](nhie_28be7d12-90b4-4846-b86a-73040eff11ec_light.png) |
+|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+
 ## API
 
 ### Endpoints
