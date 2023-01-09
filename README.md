@@ -2,6 +2,10 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/jonasknobloch/nhie)](https://goreportcard.com/report/github.com/jonasknobloch/nhie)
 
+This project aims at providing a no-bullshit "Never Have I Ever" experience.
+Available features are intentionally limited to the bare minimum.
+Use the provided API to implement own ideas.
+
 ## API
 
 ### Endpoints
