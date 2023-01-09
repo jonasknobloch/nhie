@@ -6,18 +6,6 @@
 
 ### Endpoints
 
-#### v1
-
-```http request
-GET https://api.nhie.io/v1/statements/random
-```
-
-**This endpoint is deprecated and might be removed at any time.**
-
-Since a surprising amount of other projects depend on the original API endpoint I kept it around for now.
-Note that the `history_id` query parameter is not supported anymore. See [duplicate statements](#duplicate-statements)
-for a similar functionality.
-
 #### v2
 
 ```http request
@@ -32,12 +20,24 @@ GET https://api.nhie.io/v2/statements/next
 }
 ```
 
+#### v1
+
+```http request
+GET https://api.nhie.io/v1/statements/random
+```
+
+**This endpoint is deprecated and might be removed at any time.**
+
+Since a surprising amount of other projects depend on the original API endpoint I kept it around for now.
+Note that the `history_id` query parameter is not supported anymore. See [duplicate statements](#duplicate-statements)
+for a similar functionality.
+
 ### Query Parameters
 
 | Key          | Value                           | Endpoint    |
 |--------------|---------------------------------|-------------|
-| category     | harmless, delicate or offensive | v1 & v2     |
-| language     | IETF BCP 47 language tag        | v1 & v2     |
+| category     | harmless, delicate or offensive | v2 & v1     |
+| language     | IETF BCP 47 language tag        | v2 & v1     |
 | statement_id | UUID of previous statement      | **v2 only** |
 
 ### Multiple Categories
