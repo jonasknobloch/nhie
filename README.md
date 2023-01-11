@@ -24,8 +24,8 @@ GET https://api.nhie.io/v2/statements/next
 
 ```json
 {
-  "ID":"e9ed69c3-b1ee-4d20-8e8c-9b766577a49a",
-  "statement":"Never have I ever played a drinking game.",
+  "ID":"28be7d12-90b4-4846-b86a-73040eff11ec",
+  "statement":"Never have I ever been stung by a bee.",
   "category":"harmless"
 }
 ```
@@ -79,7 +79,7 @@ All available statements are internally ordered in a random fashion. With `state
 the returned statement is guaranteed be different from previous statements.
 
 ```http request
-GET https://api.nhie.io/v2/statements/next?statement_id=e9ed69c3-b1ee-4d20-8e8c-9b766577a49a
+GET https://api.nhie.io/v2/statements/next?statement_id=28be7d12-90b4-4846-b86a-73040eff11ec
 ```
 
 ## Contributing
