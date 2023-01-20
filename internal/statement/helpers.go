@@ -23,11 +23,11 @@ func GetRandomByCategory(category category.Category) (*Statement, error) {
 	var statement Statement
 
 	err := database.C.Transaction(func(tx *gorm.DB) error {
-		if err := database.C.Raw(`SELECT COUNT(*) FROM game WHERE category = ?;`, category).Scan(&pool).Error; err != nil {
+		if err := tx.Raw(`SELECT COUNT(*) FROM game WHERE category = ?;`, category).Scan(&pool).Error; err != nil {
 			return err
 		}
 
-		if err := database.C.Raw(`SELECT id, statement, category FROM game WHERE category = ? OFFSET ? LIMIT 1;`, category, rand.Intn(pool)).Scan(&statement).Error; err != nil {
+		if err := tx.Raw(`SELECT id, statement, category FROM game WHERE category = ? OFFSET ? LIMIT 1;`, category, rand.Intn(pool)).Scan(&statement).Error; err != nil {
 			return err
 		}
 
