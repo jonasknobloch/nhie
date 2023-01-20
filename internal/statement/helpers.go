@@ -11,8 +11,14 @@ import (
 func GetByID(ID uuid.UUID) (*Statement, error) {
 	var statement Statement
 
-	if err := database.C.Raw(`SELECT id, statement, category FROM game WHERE id = ?;`, ID).Scan(&statement).Error; err != nil {
+	tx := database.C.Raw(`SELECT id, statement, category FROM game WHERE id = ?;`, ID).Scan(&statement)
+
+	if err := tx.Error; err != nil {
 		return nil, err
+	}
+
+	if tx.RowsAffected == 0 {
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	return &statement, nil
