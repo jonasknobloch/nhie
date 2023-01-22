@@ -38,17 +38,17 @@ GET https://api.nhie.io/v1/statements/random
 
 **This endpoint is deprecated and might be removed at any time.**
 
-Since a surprising amount of other projects depend on the original API endpoint I kept it around for now.
-Note that the `history_id` query parameter is not supported anymore. See [duplicate statements](#duplicate-statements)
-for a similar functionality.
+Since a surprising amount of other projects still depend on the (previously undocumented) `v1` endpoint, we decided to
+keep it around as a permanent redirect to the largely compatible `v2` endpoint. Note that the `history_id` query
+parameter is not supported anymore. See [duplicate statements](#duplicate-statements) for a similar functionality.
 
 ### Query Parameters
 
-| Key          | Value                           | Endpoint    |
-|--------------|---------------------------------|-------------|
-| category     | harmless, delicate or offensive | v2 & v1     |
-| language     | IETF BCP 47 language tag        | v2 & v1     |
-| statement_id | UUID of previous statement      | **v2 only** |
+| Key            | Value                            |
+|----------------|----------------------------------|
+| category       | harmless, delicate or offensive  |
+| language       | IETF BCP 47 language tag         |
+| statement_id   | UUID of previous statement       |
 
 ### Multiple Categories
 

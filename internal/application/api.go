@@ -20,37 +20,7 @@ func apiRouter() chi.Router {
 	}))
 
 	router.Get("/v1/statements/random", func(w http.ResponseWriter, r *http.Request) {
-		c, ok := queryCategories(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		s, err := statement.GetRandomByCategory(c.Random())
-
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		l, ok := queryLanguage(r)
-
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		if l != translate.SourceLanguage {
-			err := s.Translate(l)
-
-			if err != nil {
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-				return
-			}
-		}
-
-		render.JSON(w, r, s)
+		http.Redirect(w, r, "/v2/statements/next?"+r.URL.RawQuery, http.StatusPermanentRedirect)
 	})
 
 	router.Get("/v2/statements/next", func(w http.ResponseWriter, r *http.Request) {
