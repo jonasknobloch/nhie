@@ -20,7 +20,23 @@ func apiRouter() chi.Router {
 	}))
 
 	router.Get("/v1/statements/random", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/v2/statements/next?"+r.URL.RawQuery, http.StatusPermanentRedirect)
+		query := r.URL.Query()
+
+		if query.Has("category[]") {
+			for _, val := range query["category[]"] {
+				query.Add("category", val)
+			}
+
+			query.Del("category[]")
+		}
+
+		queryString := query.Encode()
+
+		if queryString != "" {
+			queryString = "?" + queryString
+		}
+
+		http.Redirect(w, r, "/v2/statements/next"+queryString, http.StatusPermanentRedirect)
 	})
 
 	router.Get("/v2/statements/next", func(w http.ResponseWriter, r *http.Request) {
